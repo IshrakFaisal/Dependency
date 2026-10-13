@@ -1,0 +1,8 @@
+node_modules
+.next
+coverage
+package-lock.json
+next-env.d.ts
+*.tsbuildinfo
+.npm-artifacts
+.dependencyguard
