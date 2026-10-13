@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-// Validate identifiers only. They are never interpolated into commands or URLs.
+// Validate identifiers only. Registry URL segments are encoded server-side;
+// identifiers are never interpreted as commands.
 const packageNamePattern = /^(?:@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*$/;
 const numericIdentifier = "(?:0|[1-9]\\d*)";
 const prereleaseIdentifier = "(?:0|[1-9]\\d*|\\d*[a-zA-Z-][a-zA-Z0-9-]*)";

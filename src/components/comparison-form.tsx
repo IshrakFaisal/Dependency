@@ -74,24 +74,42 @@ export function ComparisonForm({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(result.data),
-        signal: controller.signal,
+        signal: AbortSignal.any([
+          controller.signal,
+          AbortSignal.timeout(15_000),
+        ]),
       });
       const payload: unknown = await response.json();
       if (controller.signal.aborted) return;
       if (!response.ok) {
         throw new Error(
-          payload && typeof payload === "object" && "error" in payload && typeof payload.error === "string"
+          payload &&
+            typeof payload === "object" &&
+            "error" in payload &&
+            typeof payload.error === "string"
             ? payload.error
             : "The analysis could not be started. Please try again.",
         );
       }
-      if (!payload || typeof payload !== "object" || !("id" in payload) || typeof payload.id !== "string" || !/^[a-zA-Z0-9-]+$/.test(payload.id)) {
-        throw new Error("The server returned an invalid analysis ID. Please try again.");
+      if (
+        !payload ||
+        typeof payload !== "object" ||
+        !("id" in payload) ||
+        typeof payload.id !== "string" ||
+        !/^[a-zA-Z0-9-]+$/.test(payload.id)
+      ) {
+        throw new Error(
+          "The server returned an invalid analysis ID. Please try again.",
+        );
       }
       router.push(`/analysis/${payload.id}`);
     } catch (error) {
       if (controller.signal.aborted) return;
-      setRequestError(error instanceof Error ? error.message : "Unable to reach the analysis service. Please try again.");
+      setRequestError(
+        error instanceof Error
+          ? error.message
+          : "Unable to reach the analysis service. Please try again.",
+      );
       submitting.current = false;
       setPending(false);
     }
@@ -146,7 +164,11 @@ export function ComparisonForm({
                 name="packageName"
                 className="field-input pl-10"
                 defaultValue={staticEnabled ? "" : "example-package"}
-                placeholder={staticEnabled ? "zod or @scope/package-name" : "@scope/package-name"}
+                placeholder={
+                  staticEnabled
+                    ? "zod or @scope/package-name"
+                    : "@scope/package-name"
+                }
                 autoComplete="off"
                 spellCheck={false}
                 maxLength={214}
@@ -229,7 +251,11 @@ export function ComparisonForm({
             ) : (
               <GitCompareArrows />
             )}
-            {pending ? staticEnabled ? "Starting analysis…" : "Opening demo…" : "Analyze Update"}
+            {pending
+              ? staticEnabled
+                ? "Starting analysis…"
+                : "Opening demo…"
+              : "Analyze Update"}
             <ArrowRight />
           </Button>
         </div>
@@ -258,9 +284,9 @@ export function ComparisonForm({
           <p>
             {staticEnabled ? (
               <>
-                <strong>Live static analysis.</strong> Fetch public npm releases,
-                verify archive integrity, and compare files and source signals.
-                Runtime behavior and AI investigation are not assessed.
+                <strong>Live static analysis.</strong> Fetch public npm
+                releases, verify archive integrity, and compare files and source
+                signals. Runtime behavior and AI investigation are not assessed.
               </>
             ) : enabled ? (
               <>
@@ -271,8 +297,8 @@ export function ComparisonForm({
               </>
             ) : (
               <>
-                <strong>Analysis is disabled.</strong> Enable static analysis
-                or set DEMO_MODE=true to explore the synthetic demo.
+                <strong>Analysis is disabled.</strong> Enable static analysis or
+                set DEMO_MODE=true to explore the synthetic demo.
               </>
             )}
           </p>

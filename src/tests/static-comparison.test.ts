@@ -1,5 +1,7 @@
 import { createHash } from "node:crypto";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("server-only", () => ({}));
 
 import { compareSnapshots } from "@/lib/analysis/compare";
 import type {
@@ -68,6 +70,39 @@ function count(report: StaticAnalysisReport, category: string) {
 }
 
 describe("static source differential comparison", () => {
+  it("detects sensitive variable substitution with unchanged reference counts", () => {
+    const report = compare(
+      snapshot([file("index.js", "process.env.NODE_ENV;")]),
+      snapshot([file("index.js", "process.env.NPM_TOKEN;")]),
+    );
+    expect(count(report, "environment")).toMatchObject({
+      oldCount: 1,
+      newCount: 1,
+    });
+    expect(
+      report.findings.some((finding) => finding.title.includes("NPM_TOKEN")),
+    ).toBe(true);
+  });
+
+  it("does not report an unchanged sensitive variable merely moved to another line", () => {
+    const report = compare(
+      snapshot([file("index.js", "process.env.NPM_TOKEN;")]),
+      snapshot([file("index.js", "\n\nprocess.env.NPM_TOKEN;")]),
+    );
+    expect(report.findings).toHaveLength(0);
+  });
+
+  it("flags prepublishOnly lifecycle changes", () => {
+    const report = compare(
+      snapshot(),
+      snapshot([], {
+        scripts: { prepublishOnly: "node synthetic-fixture.js" },
+      }),
+    );
+    expect(
+      report.findings.some((finding) => finding.category === "lifecycle"),
+    ).toBe(true);
+  });
   it("finds an added capability with source hashes and a real evidence reference", () => {
     const trusted = snapshot([file("index.js", "export const value = 1;\n")]);
     const candidate = snapshot([

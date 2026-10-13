@@ -64,7 +64,14 @@ export interface StaticEvidence {
 
 export interface ReleaseFinding {
   id: string;
-  category: "network" | "environment" | "process" | "filesystem" | "dynamic-code" | "lifecycle" | "metadata";
+  category:
+    | "network"
+    | "environment"
+    | "process"
+    | "filesystem"
+    | "dynamic-code"
+    | "lifecycle"
+    | "metadata";
   title: string;
   description: string;
   status: FindingStatus;
@@ -88,13 +95,30 @@ export interface StaticAnalysisReport {
   status: "INCONCLUSIVE";
   riskScore: null;
   summary: string;
-  releases: { trusted: Omit<PackageSnapshot, "files" | "manifest"> & { fileCount: number }; candidate: Omit<PackageSnapshot, "files" | "manifest"> & { fileCount: number } };
+  releases: {
+    trusted: Omit<PackageSnapshot, "files" | "manifest"> & {
+      fileCount: number;
+    };
+    candidate: Omit<PackageSnapshot, "files" | "manifest"> & {
+      fileCount: number;
+    };
+  };
   fileChanges: FileChange[];
   manifestChanges: ManifestChange[];
   findings: ReleaseFinding[];
   evidence: StaticEvidence[];
-  signalCounts: { category: ReleaseFinding["category"]; oldCount: number; newCount: number }[];
-  coverage: { trustedFilesScanned: number; candidateFilesScanned: number; skippedFiles: number; truncated: boolean; notes: string[] };
+  signalCounts: {
+    category: ReleaseFinding["category"];
+    oldCount: number;
+    newCount: number;
+  }[];
+  coverage: {
+    trustedFilesScanned: number;
+    candidateFilesScanned: number;
+    skippedFiles: number;
+    truncated: boolean;
+    notes: string[];
+  };
   limitations: string[];
 }
 

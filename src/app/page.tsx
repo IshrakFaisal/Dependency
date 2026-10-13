@@ -92,7 +92,10 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <ComparisonForm enabled={demoMode} staticEnabled={staticAnalysisEnabled} />
+      <ComparisonForm
+        enabled={demoMode}
+        staticEnabled={staticAnalysisEnabled}
+      />
       {staticAnalysisEnabled && <RecentAnalyses />}
       <section
         id="how-it-works"

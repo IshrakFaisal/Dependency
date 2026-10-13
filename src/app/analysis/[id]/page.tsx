@@ -22,5 +22,5 @@ export default async function AnalysisPage({
   if (!staticAnalysisEnabled) notFound();
   const job = await analysisJobs.get(id);
   if (!job) notFound();
-  return <StaticAnalysisProgress initialJob={job} />;
+  return <StaticAnalysisProgress key={job.id} initialJob={job} />;
 }

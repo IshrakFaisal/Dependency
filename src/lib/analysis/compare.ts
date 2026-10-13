@@ -1,3 +1,4 @@
+import "server-only";
 import type {
   ArchiveFile,
   FileChange,
@@ -20,6 +21,7 @@ const lifecycleNames = new Set([
   "install",
   "postinstall",
   "prepublish",
+  "prepublishOnly",
   "preprepare",
   "prepare",
   "postprepare",
@@ -86,6 +88,40 @@ function excerpt(value: string): string {
   return value.length > MAX_EXCERPT
     ? `${value.slice(0, MAX_EXCERPT)}… [excerpt truncated]`
     : value;
+}
+
+function sensitiveReferences(text: string): Map<string, Match> {
+  const references = new Map<string, Match>();
+  const pattern =
+    /\bprocess\s*(?:\.\s*env\b|\[\s*["']env["']\s*\])\s*(?:\.\s*([A-Za-z_$][\w$]*)|\[\s*["']([A-Za-z_$][\w$]*)["']\s*\])/g;
+  let match: RegExpExecArray | null;
+  let line = 1;
+  let nextNewline = text.indexOf("\n");
+  // Source length is bounded by scanSnapshot before this helper is called.
+  while ((match = pattern.exec(text))) {
+    while (nextNewline !== -1 && nextNewline < match.index) {
+      line++;
+      nextNewline = text.indexOf("\n", nextNewline + 1);
+    }
+    const name = match[1] ?? match[2];
+    if (
+      !/(?:TOKEN|SECRET|PASSWORD|CREDENTIAL|(?:^|_)KEY(?:_|$))/i.test(name) ||
+      references.has(name)
+    )
+      continue;
+    references.set(name, {
+      index: match.index,
+      line,
+      excerpt: excerpt(
+        text.slice(
+          Math.max(0, match.index - 80),
+          match.index + MAX_EXCERPT - 80,
+        ),
+      ),
+      signature: name,
+    });
+  }
+  return references;
 }
 
 function scanSnapshot(snapshot: PackageSnapshot, role: string): Scan {
@@ -413,6 +449,38 @@ export function compareSnapshots(
     }
   }
 
+  // A benign variable replaced with a sensitive name merits review even when
+  // the total number of environment references stays constant.
+  for (const [path] of newScan.files) {
+    const oldFile = oldFiles.get(path);
+    if (oldFile && !oldScan.files.has(path)) continue;
+    const newFile = newFiles.get(path)!;
+    const before = sensitiveReferences(oldFile?.text ?? "");
+    const after = sensitiveReferences(newFile.text!);
+    for (const [name, match] of after) {
+      if (before.has(name)) continue;
+      const evidenceId = addEvidence({
+        source: "npm-archive",
+        file: path,
+        oldLine: null,
+        newLine: match.line,
+        oldExcerpt: null,
+        newExcerpt: match.excerpt,
+        oldSha256: oldFile?.sha256 ?? null,
+        newSha256: newFile.sha256,
+      });
+      if (!evidenceId) break;
+      addFinding({
+        category: "environment",
+        title: `New sensitive environment name ${name} in ${path}`,
+        description:
+          "A named environment reference associated with credentials appears in candidate source but not its scanned trusted counterpart. This may be a read, write, comment, or unreachable code; no environment access was observed.",
+        severity: "medium",
+        evidenceIds: [evidenceId],
+      });
+    }
+  }
+
   for (const [field, kind] of manifestFields) {
     const oldValues = trusted.manifest[field];
     const newValues = candidate.manifest[field];
@@ -502,7 +570,7 @@ export function compareSnapshots(
     limitations: [
       "Static analysis only: no package code, lifecycle script, sandbox, network behavior, filesystem behavior, or child process was executed or observed. Runtime behavior is untested, not zero.",
       "Lexical source patterns can match comments, strings, and unrelated function names. Environment references may be writes rather than reads. Aliases, computed properties, obfuscation, native binaries, and other languages can hide capabilities.",
-      "Counts are textual references, not runtime events. Findings identify increases per file and rule; changed arguments with unchanged counts are not detected as new capabilities. File renames are treated as removal and addition.",
+      "Counts are textual references, not runtime events. Findings identify increases per file and rule and newly introduced named sensitive environment references. Other changed arguments with unchanged counts are not detected as new capabilities. File renames are treated as removal and addition.",
       "Only JavaScript/TypeScript files up to 256 KiB, within a 2,000-file / 8 MiB budget per release, are scanned. Binary, unavailable, oversized, and non-source content is excluded from source rules. Each source finding has representative, bounded evidence rather than every occurrence.",
       "Dependency and script comparisons use archived package.json fields. Dependencies are not resolved, downloaded, or analyzed transitively. Registry/archive mismatches are independently reported for both releases.",
       "Artifact digests verify downloaded bytes against registry-provided integrity, not the publisher's trustworthiness. No CVE lookup, AI model, or numerical risk assessment is performed; the result remains INCONCLUSIVE.",

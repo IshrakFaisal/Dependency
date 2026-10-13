@@ -133,14 +133,12 @@ describe("npm registry transport", () => {
   it.each([301, 302, 307, 308])(
     "fails closed on redirect status %s",
     async (status) => {
-      const fetchMock = vi
-        .fn()
-        .mockResolvedValue(
-          new Response(null, {
-            status,
-            headers: { Location: "https://private.invalid" },
-          }),
-        );
+      const fetchMock = vi.fn().mockResolvedValue(
+        new Response(null, {
+          status,
+          headers: { Location: "https://private.invalid" },
+        }),
+      );
       vi.stubGlobal("fetch", fetchMock);
       await expect(
         fetchRelease(metadata.name, metadata.version),
@@ -211,15 +209,13 @@ describe("npm registry transport", () => {
   it("bounds advertised size before reading the body", async () => {
     vi.stubGlobal(
       "fetch",
-      vi
-        .fn()
-        .mockResolvedValue(
-          new Response("{}", {
-            headers: {
-              "content-length": String(REGISTRY_LIMITS.metadataBytes + 1),
-            },
-          }),
-        ),
+      vi.fn().mockResolvedValue(
+        new Response("{}", {
+          headers: {
+            "content-length": String(REGISTRY_LIMITS.metadataBytes + 1),
+          },
+        }),
+      ),
     );
     await expect(fetchRelease(metadata.name, metadata.version)).rejects.toThrow(
       /download size/,
@@ -227,7 +223,10 @@ describe("npm registry transport", () => {
   });
 
   it("counts streamed bytes even without or with a dishonest content-length", async () => {
-    for (const headers of [{}, { "content-length": "1" }]) {
+    for (const headers of [{}, { "content-length": "1" }] as Record<
+      string,
+      string
+    >[]) {
       let canceled = false;
       const stream = new ReadableStream<Uint8Array>({
         start(controller) {
@@ -301,14 +300,12 @@ describe("npm registry transport", () => {
     );
     vi.stubGlobal(
       "fetch",
-      vi
-        .fn()
-        .mockResolvedValue(
-          response({
-            ...metadata,
-            dist: { tarball: metadata.dist.tarball, shasum: "0".repeat(40) },
-          }),
-        ),
+      vi.fn().mockResolvedValue(
+        response({
+          ...metadata,
+          dist: { tarball: metadata.dist.tarball, shasum: "0".repeat(40) },
+        }),
+      ),
     );
     expect(
       (await fetchRelease(metadata.name, metadata.version)).integrity,

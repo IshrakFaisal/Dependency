@@ -25,7 +25,7 @@ function checksum(header: Buffer) {
   header.write(`${sum.toString(8).padStart(6, "0")}\0 `, 148, 8, "ascii");
 }
 
-function tar(entries: Entry[], ending = Buffer.alloc(1024)): Buffer {
+function tar(entries: Entry[], ending: Buffer = Buffer.alloc(1024)): Buffer {
   const chunks: Buffer[] = [];
   for (const entry of entries) {
     const body = Buffer.from(entry.body ?? "");

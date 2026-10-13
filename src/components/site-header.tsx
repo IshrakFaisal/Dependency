@@ -5,7 +5,13 @@ import { usePathname } from "next/navigation";
 import { ArrowUpRight, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function SiteHeader({ demoMode, staticEnabled = false }: { demoMode: boolean; staticEnabled?: boolean }) {
+export function SiteHeader({
+  demoMode,
+  staticEnabled = false,
+}: {
+  demoMode: boolean;
+  staticEnabled?: boolean;
+}) {
   const pathname = usePathname();
   return (
     <header className="site-header">
@@ -55,7 +61,11 @@ export function SiteHeader({ demoMode, staticEnabled = false }: { demoMode: bool
               staticEnabled || demoMode ? "bg-[#9deaab]" : "bg-amber-300",
             )}
           />
-          {staticEnabled ? "Static analysis" : demoMode ? "Demo mode" : "Analysis disabled"}
+          {staticEnabled
+            ? "Static analysis"
+            : demoMode
+              ? "Demo mode"
+              : "Analysis disabled"}
           <span className="ml-1 hidden border-l border-white/15 pl-2 text-[#7d8a82] sm:inline">
             v0.2
           </span>
