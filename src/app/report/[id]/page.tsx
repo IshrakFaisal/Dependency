@@ -6,6 +6,7 @@ import { demoMode, staticAnalysisEnabled } from "@/lib/config";
 import { analysisJobs } from "@/lib/analysis/jobs";
 import { StaticReportView } from "@/components/static-report-view";
 import { loadRuntimeEvidence } from "@/lib/runtime/storage";
+import { investigations } from "@/lib/investigation/service";
 
 export const metadata: Metadata = {
   title: "Evidence report",
@@ -32,6 +33,7 @@ export default async function ReportPage({
     <StaticReportView
       report={report}
       runtimeEvidence={await loadRuntimeEvidence(report)}
+      investigation={await investigations.view(report)}
     />
   );
 }

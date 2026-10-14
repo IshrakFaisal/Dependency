@@ -5,6 +5,9 @@ const { get, getReport } = vi.hoisted(() => ({
   getReport: vi.fn(),
 }));
 vi.mock("server-only", () => ({}));
+vi.mock("@/lib/investigation/service", () => ({
+  investigations: { view: vi.fn() },
+}));
 vi.mock("@/lib/analysis/jobs", () => ({
   analysisJobs: { get, store: { getReport } },
 }));

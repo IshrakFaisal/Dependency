@@ -435,7 +435,7 @@ describe("static report evidence", () => {
     const view = render(<StaticReportView report={report} />);
     expect(screen.getAllByText("INCONCLUSIVE")).toHaveLength(2);
     expect(screen.getAllByText("Not assessed")).toHaveLength(2);
-    expect(screen.getByText("Not connected")).toBeTruthy();
+    expect(screen.getByText("Separate supplement")).toBeTruthy();
     expect(screen.getAllByText("Not run")).toHaveLength(6);
     expect(
       screen.getByText('<script>alert("untrusted-source")</script>'),

@@ -67,7 +67,7 @@ export function SiteHeader({
               ? "Demo mode"
               : "Analysis disabled"}
           <span className="ml-1 hidden border-l border-white/15 pl-2 text-[#7d8a82] sm:inline">
-            v0.3
+            v0.4
           </span>
         </span>
       </div>

@@ -14,6 +14,8 @@ import type { StaticAnalysisReport } from "@/lib/types/static-analysis";
 import { StaticReportActions } from "@/components/static-report-actions";
 import { RuntimeReportPanel } from "@/components/runtime-report-panel";
 import type { RuntimeEvidenceState } from "@/lib/runtime/contracts";
+import type { InvestigationView } from "@/lib/investigation/contracts";
+import { InvestigationPanel } from "@/components/investigation-panel";
 
 const navigation = [
   ["overview", "Executive summary"],
@@ -25,6 +27,7 @@ const navigation = [
   ["coverage", "Scan coverage"],
   ["assessment", "Assessment limits"],
   ["runtime", "Runtime probe evidence"],
+  ["investigation", "AI investigation"],
 ] as const;
 
 const categoryLabels = {
@@ -180,9 +183,11 @@ function ReleaseCard({
 export function StaticReportView({
   report,
   runtimeEvidence,
+  investigation,
 }: {
   report: StaticAnalysisReport;
   runtimeEvidence?: RuntimeEvidenceState;
+  investigation?: InvestigationView;
 }) {
   const fileCounts = { added: 0, modified: 0, removed: 0 };
   for (const file of report.fileChanges) fileCounts[file.change] += 1;
@@ -202,6 +207,7 @@ export function StaticReportView({
         <StaticReportActions
           report={report}
           runtimeEvidence={runtimeEvidence}
+          investigation={investigation?.artifact}
         />
       </div>
       <header className="mb-8 mt-9">
@@ -242,7 +248,7 @@ export function StaticReportView({
           {runtimeEvidence?.status === "available"
             ? " A separate experimental runtime supplement is attached at the end of this report."
             : " No verified runtime supplement is attached."}{" "}
-          No AI conclusions are included.
+          Optional AI explanations appear separately in the investigation panel.
         </p>
       </div>
       <div className="grid items-start gap-10 lg:grid-cols-[190px_minmax(0,1fr)]">
@@ -676,12 +682,12 @@ export function StaticReportView({
                   </div>
                   <div className="flex justify-between gap-3">
                     <dt className="text-[#a0b4a7]">AI investigation</dt>
-                    <dd className="text-[#c3d4c9]">Not connected</dd>
+                    <dd className="text-[#c3d4c9]">Separate supplement</dd>
                   </div>
                 </dl>
                 <p className="mt-5 text-xs leading-6 text-[#93a99b]">
                   Findings and explanations come from deterministic static
-                  checks. No model generated this report.
+                  checks. No model generated the static assessment above.
                 </p>
               </div>
             </div>
@@ -694,6 +700,7 @@ export function StaticReportView({
             )}
           </Section>
           <RuntimeReportPanel state={runtimeEvidence} />
+          <InvestigationPanel analysisId={report.id} initial={investigation} />
         </div>
       </div>
     </div>

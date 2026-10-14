@@ -2,7 +2,7 @@
 
 **Know what changed before you trust the update.**
 
-Compare two npm releases, inspect new signals, and review evidence before deciding whether to trust an update. The web workflow performs real registry/archive comparison without executing package code. Phase 3 adds an optional, separate container worker for experimental import probes and a runtime evidence supplement.
+Compare two npm releases, inspect new signals, and review evidence before deciding whether to trust an update. The web workflow performs real registry/archive comparison without executing package code. Phase 3 adds an optional, separate container worker for experimental import probes. Phase 4 adds optional Nebius AI investigation of static evidence, with citations, input previews and persistent results.
 
 ## Run locally
 
@@ -24,6 +24,32 @@ Open [http://localhost:3000](http://localhost:3000). To run a production build l
 npm run build
 npm start
 ```
+
+## Phase 4: evidence-linked AI investigation
+
+The report's **AI investigation** panel explains static source changes, presents possible benign alternatives, and suggests manual checks. It is disabled by default. There are no automatic provider calls when opening reports or running analyses. The original deterministic assessment remains **INCONCLUSIVE**, with no risk score, regardless of model output. Demo AI text remains a separate fictional fixture.
+
+Add these server-only settings to `.env.local`, then restart the app:
+
+```dotenv
+AI_INVESTIGATION_ENABLED=true
+NEBIUS_API_KEY=<your-nebius-api-key>
+NEBIUS_MODEL=<exact-model-id-from-your-nebius-account>
+```
+
+Choose an available NVIDIA Nemotron model whose model card supports JSON output. Model availability varies; no model ID is guessed or silently substituted. The integration uses the fixed HTTPS endpoint `https://api.tokenfactory.nebius.com/v1/chat/completions`, bearer authentication and structured JSON output. Custom endpoints and model selection from request bodies are not supported. Refer to the [Nebius structured output guide](https://docs.tokenfactory.nebius.com/ai-models-inference/json) and [Nemotron overview](https://nebius.com/services/token-factory/nemotron).
+
+Open a completed real report with source evidence, expand **Review exact evidence sent to Nebius**, and select **Generate with Nebius**. This explicit action may incur provider charges. The preview contains package identity, both archive hashes, scan coverage and at most 24 source evidence entries. Excerpts are limited to 800 characters each; omissions and limits are disclosed. Common token/assignment patterns are redacted, but arbitrary secrets in public package source cannot be reliably detected. Review the preview before sharing it. The provider also receives a fixed system instruction and output schema. Runtime telemetry, local environment values, full archives, registry descriptions and private files are excluded from the evidence. The API key is used only for authorization, never in the model prompt.
+
+Model text is untrusted: it is rendered as plain text, never HTML, tools or executable commands. Every observation must cite IDs included in the submitted packet. Zod validates strict bounded output, and rejects invented or duplicate citation IDs, extra score/status fields, refusals, tool calls and incomplete responses. **Valid IDs do not prove factual support.** Prompt instructions request conservative hypotheses and prohibit malware/safety verdicts, but this is not semantic verification or a guarantee against prompt injection. A human must verify each claim against source evidence. The UI labels explanations **UNVERIFIED RISK**. This phase deliberately does not ask the model to interpret the experimental runtime hooks.
+
+Requests have a 45-second deadline, 4,096 output-token budget and 128 KiB response cap. There are no automatic paid retries. One global on-disk lock prevents concurrent provider requests, and the single app process permits at most three starts per minute. A validated result is reused without another provider call. An input fingerprint binds the report ID, archive hashes, submitted evidence, coverage, model and prompt version; changes hide old results until a new investigation is explicitly requested. Changing only omitted or redacted source text does not change the submitted packet; changing either archive hash always invalidates it.
+
+Artifacts are saved atomically in ignored `.dependencyguard/investigations/<id>.investigation.json` (64 KiB maximum). Report JSON exports include the validated AI supplement with model, provider, timestamp, prompt version and input fingerprint. Provider failures never overwrite a previous result. A hard server crash can leave `investigation.lock`; after confirming no request is active, the operator can remove that single lock file. Locks are never silently stolen. On ambiguous timeouts, reload the report before retrying: a failed response cannot guarantee that the provider did not bill. This remains a local single-process app, without authentication or distributed billing quotas; do not expose it publicly with paid credentials.
+
+`GET /api/analyses/[id]/investigation` returns configuration availability, the exact evidence preview, cache status and any current artifact. It never calls Nebius. `POST` accepts only `{ "fingerprint": "<preview-sha256>" }` and uses stored server evidence; cross-origin browser requests, extra prompts/models/commands and changed preview fingerprints are rejected. No-evidence reports are not sent. Both endpoints honor the static-analysis gate.
+
+The integration is validated with synthetic fixtures and mocked provider responses. A live paid Nebius call has not been run in this workspace; configure an eligible model and credentials to verify account-specific compatibility. Neither the app nor its tests fabricate a successful live model result.
 
 ## Phase 3: isolated import probes
 
@@ -95,7 +121,7 @@ POST accepts only `{ "packageName": "is-number", "trustedVersion": "6.0.0", "can
 
 ## Honest evidence and risk language
 
-Real reports use **INCONCLUSIVE**, with `riskScore: null`. Static findings are **STATIC SIGNAL**: matching source text does not establish that a code path ran. The optional runtime supplement is separate from static findings; without attached evidence it says **Not run**. AI investigation is **Not connected**. No real package is labeled malicious based on these patterns.
+Real reports use **INCONCLUSIVE**, with `riskScore: null`. Static findings are **STATIC SIGNAL**: matching source text does not establish that a code path ran. The optional runtime supplement is separate from static findings; without attached evidence it says **Not run**. Optional AI investigation appears as a separate, explicitly unverified supplement. No deterministic check labels a real package malicious based on these patterns.
 
 The scanner is deliberately limited text matching, not AST, data-flow, or reachability analysis. It can match comments or dead code and miss aliases, obfuscation, computed properties, native binaries, and indirect calls. Category findings normally use increases within a file; equal-count argument changes can be missed. Newly introduced named sensitive environment accesses are checked separately. It does not resolve transitive dependency trees or validate registry signatures/provenance. Matching a registry checksum establishes consistency with supplied metadata, not publisher trust.
 
@@ -144,6 +170,7 @@ src/
   lib/
     analysis/             Registry transport, archive parser, comparer, jobs, storage
     runtime/              Probe contracts, container policy/adapter, comparison, storage
+    investigation/        Evidence packets, Nebius transport, schemas, cache and request gates
     types/                Demo/domain types and separate static report contracts
     demo/                 Deterministic synthetic fixture
     risk/                 Evidence-linked demo scoring
@@ -170,10 +197,12 @@ npm run format:check
 
 Runtime unit tests mock Docker and cover fixed policy, image/configuration gates, exact-byte payloads, cleanup, malformed evidence, incomplete baselines, artifact binding, size caps, exclusive worker locks, API access, and inert rendering/export. `runtime:selftest` is a separate Docker integration check, not part of `npm test`.
 
+AI tests mock Nebius and cover configuration gates, evidence redaction/limits, fingerprints, request boundaries, citation validation, refusal/truncation/error handling, deadlines, response caps, persistence, stale artifacts, duplicate request locks, rate limits, disclosure, explicit generation, inert rendering and exports. Tests do not call a paid provider.
+
 The Phase 3 dependency audit led to compatible Vite/Vitest and transitive updates. Five high-severity audit entries remain in the development-only `eslint-config-next` → `braces` chain; npm's proposed automatic fix downgrades the ESLint configuration to Next 14 and was not applied. Recheck with `npm audit` as upstream fixes become available.
 
 ## Remaining work
 
-Validate the container self-test on a Docker-enabled dedicated host before real probes. Remaining work includes hardened VM/microVM isolation, independent operating-system telemetry, signed worker evidence, a crash-proof reaper, repeatable multi-run experiments, dependency/lifecycle coverage, NVIDIA/Nemotron through Nebius, and calibrated risk scoring. AST/data-flow analysis, publisher provenance, authenticated access, a shared database/worker queue, retention controls, and deployment hardening also remain. Phase 3 does not include live AI integration or production-grade hostile-code detonation.
+Validate the container self-test on a Docker-enabled dedicated host before real probes, and perform a live Nebius compatibility check with an eligible Nemotron model. Remaining work includes semantic citation/support evaluation, stronger secret detection, AI evaluation fixtures and prompt-injection benchmarks, runtime-aware reasoning, hardened VM/microVM isolation, independent operating-system telemetry, signed worker evidence, a crash-proof reaper, repeatable multi-run experiments, dependency/lifecycle coverage and calibrated risk scoring. AST/data-flow analysis, publisher provenance, authenticated access, a shared database/worker queue, retention controls and deployment hardening also remain. Phase 4 is not production-grade hostile-code detonation or an autonomous trust verdict.
 
 Protocol references: [npm registry metadata](https://github.com/npm/registry/blob/main/docs/responses/package-metadata.md), [npm registry signatures](https://docs.npmjs.com/about-registry-signatures/), and [Next.js self-hosting](https://nextjs.org/docs/app/guides/self-hosting).

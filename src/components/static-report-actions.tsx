@@ -4,13 +4,16 @@ import { Check, Download, Printer } from "lucide-react";
 import { useState } from "react";
 import type { StaticAnalysisReport } from "@/lib/types/static-analysis";
 import type { RuntimeEvidenceState } from "@/lib/runtime/contracts";
+import type { InvestigationArtifact } from "@/lib/investigation/contracts";
 
 export function StaticReportActions({
   report,
   runtimeEvidence,
+  investigation,
 }: {
   report: StaticAnalysisReport;
   runtimeEvidence?: RuntimeEvidenceState;
+  investigation?: InvestigationArtifact | null;
 }) {
   const [exported, setExported] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +26,10 @@ export function StaticReportActions({
         runtimeEvidence?.status === "available"
           ? { ...report, runtimeSupplement: runtimeEvidence.comparison }
           : report;
-      const blob = new Blob([JSON.stringify(exportedReport, null, 2)], {
+      const completeReport = investigation
+        ? { ...exportedReport, aiInvestigation: investigation }
+        : exportedReport;
+      const blob = new Blob([JSON.stringify(completeReport, null, 2)], {
         type: "application/json",
       });
       url = URL.createObjectURL(blob);
