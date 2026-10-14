@@ -34,8 +34,8 @@ const stages = [
     label: "DETONATE",
     title: "Observe the difference.",
     description:
-      "The planned sandbox will run both releases in isolated environments to capture what they actually do.",
-    footer: "ISOLATED EXECUTION · NOT ENABLED",
+      "An optional isolated worker probes release imports and records API attempts. Execution is separate from the static web workflow.",
+    footer: "ISOLATED IMPORT PROBE · OPT-IN",
   },
   {
     n: "03",

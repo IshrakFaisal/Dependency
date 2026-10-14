@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import type { StaticAnalysisReport } from "@/lib/types/static-analysis";
 import { StaticReportActions } from "@/components/static-report-actions";
+import { RuntimeReportPanel } from "@/components/runtime-report-panel";
+import type { RuntimeEvidenceState } from "@/lib/runtime/contracts";
 
 const navigation = [
   ["overview", "Executive summary"],
@@ -22,6 +24,7 @@ const navigation = [
   ["evidence", "Source evidence"],
   ["coverage", "Scan coverage"],
   ["assessment", "Assessment limits"],
+  ["runtime", "Runtime probe evidence"],
 ] as const;
 
 const categoryLabels = {
@@ -174,7 +177,13 @@ function ReleaseCard({
   );
 }
 
-export function StaticReportView({ report }: { report: StaticAnalysisReport }) {
+export function StaticReportView({
+  report,
+  runtimeEvidence,
+}: {
+  report: StaticAnalysisReport;
+  runtimeEvidence?: RuntimeEvidenceState;
+}) {
   const fileCounts = { added: 0, modified: 0, removed: 0 };
   for (const file of report.fileChanges) fileCounts[file.change] += 1;
   const dependencyChanges = report.manifestChanges.filter(
@@ -190,7 +199,10 @@ export function StaticReportView({ report }: { report: StaticAnalysisReport }) {
         >
           <ArrowLeft size={14} /> New comparison
         </Link>
-        <StaticReportActions report={report} />
+        <StaticReportActions
+          report={report}
+          runtimeEvidence={runtimeEvidence}
+        />
       </div>
       <header className="mb-8 mt-9">
         <div className="mb-4 flex flex-wrap items-center gap-3">
@@ -225,9 +237,12 @@ export function StaticReportView({ report }: { report: StaticAnalysisReport }) {
       <div className="mb-9 flex items-start gap-3 rounded-lg border border-[#a9d8b7]/15 bg-[#a9d8b7]/[0.04] p-4 text-xs leading-6 text-[#adc4b5]">
         <LockKeyhole className="mt-1 size-4 shrink-0" />
         <p>
-          This report compares downloaded archives and static source patterns.
-          Package code and install scripts were not executed. No runtime
-          observations or AI conclusions are included.
+          The static analysis below compares downloaded archives and source
+          patterns without executing package code.
+          {runtimeEvidence?.status === "available"
+            ? " A separate experimental runtime supplement is attached at the end of this report."
+            : " No verified runtime supplement is attached."}{" "}
+          No AI conclusions are included.
         </p>
       </div>
       <div className="grid items-start gap-10 lg:grid-cols-[190px_minmax(0,1fr)]">
@@ -282,7 +297,7 @@ export function StaticReportView({ report }: { report: StaticAnalysisReport }) {
                     Not assessed
                   </p>
                   <p className="mt-2 text-xs leading-5 text-[#91a597]">
-                    Runtime evidence is unavailable.
+                    Static findings do not establish runtime risk.
                   </p>
                 </div>
               </div>
@@ -628,7 +643,9 @@ export function StaticReportView({ report }: { report: StaticAnalysisReport }) {
           >
             <div className="grid gap-4 md:grid-cols-2">
               <div className="panel p-5">
-                <h3 className="mb-4 text-sm font-medium">Runtime behavior</h3>
+                <h3 className="mb-4 text-sm font-medium">
+                  Runtime behavior in static analysis
+                </h3>
                 <dl className="space-y-4 text-xs">
                   {[
                     "Network activity",
@@ -676,6 +693,7 @@ export function StaticReportView({ report }: { report: StaticAnalysisReport }) {
               </ul>
             )}
           </Section>
+          <RuntimeReportPanel state={runtimeEvidence} />
         </div>
       </div>
     </div>

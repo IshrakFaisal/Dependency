@@ -12,8 +12,8 @@ export function SiteFooter() {
           </span>
         </span>
         <span className="mono text-[10px]">
-          EVIDENCE FIRST. NO PACKAGE EXECUTION.{" "}
-          <span className="ml-3 text-[#a0b3a6]">PHASE 02</span>
+          EVIDENCE FIRST. EXECUTION STAYS ISOLATED.{" "}
+          <span className="ml-3 text-[#a0b3a6]">PHASE 03</span>
         </span>
       </div>
     </footer>

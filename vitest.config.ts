@@ -4,5 +4,10 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   esbuild: { jsx: "automatic" },
   resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },
-  test: { environment: "node", include: ["src/tests/**/*.test.{ts,tsx}"] },
+  test: {
+    environment: "node",
+    include: ["src/tests/**/*.test.{ts,tsx}"],
+    maxWorkers: 4,
+    testTimeout: 15000,
+  },
 });

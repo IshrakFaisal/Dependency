@@ -7,6 +7,10 @@ export default defineConfig([
   ...nextVitals,
   ...nextTs,
   prettier,
+  {
+    files: ["sandbox/*.cjs"],
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
   globalIgnores([
     ".next/**",
     "out/**",

@@ -5,6 +5,7 @@ import { DEMO_ANALYSIS_ID, DEMO_REPORT } from "@/lib/demo";
 import { demoMode, staticAnalysisEnabled } from "@/lib/config";
 import { analysisJobs } from "@/lib/analysis/jobs";
 import { StaticReportView } from "@/components/static-report-view";
+import { loadRuntimeEvidence } from "@/lib/runtime/storage";
 
 export const metadata: Metadata = {
   title: "Evidence report",
@@ -27,5 +28,10 @@ export default async function ReportPage({
   if (job.status !== "completed") redirect(`/analysis/${id}`);
   const report = await analysisJobs.store.getReport(id);
   if (!report) notFound();
-  return <StaticReportView report={report} />;
+  return (
+    <StaticReportView
+      report={report}
+      runtimeEvidence={await loadRuntimeEvidence(report)}
+    />
+  );
 }
