@@ -1,5 +1,6 @@
 import type { MetadataSignal } from "@/lib/analysis/metadata-signals";
 import { metadataSignalSchema } from "@/lib/analysis/metadata-signals";
+import { computeTriage, type Triage } from "@/lib/analysis/triage";
 import type {
   ReleaseFinding,
   StaticAnalysisReport,
@@ -19,6 +20,7 @@ export type CliResult = CliTarget &
         outcome: "completed";
         status: "INCONCLUSIVE";
         metadataSignals: MetadataSignal[];
+        triage: Triage;
         findingsByCategory: Record<ReleaseFinding["category"], number>;
         coverage: StaticAnalysisReport["coverage"];
         limitations: string[];
@@ -31,6 +33,7 @@ export interface CliDocument {
   results: CliResult[];
   skipped: { name: string | null; path: string; reason: string }[];
   summary: { completed: number; failed: number; skipped: number };
+  triageSummary?: Record<Triage["tier"], number>;
   error?: { code: "usage-error" | "file-error"; message: string };
 }
 
@@ -39,7 +42,7 @@ export interface CliDocument {
  */
 export function displayText(text: string): string {
   return text
-    .replace(/\b(?:safe|unsafe|malicious|clean)\b/gi, "[omitted]")
+    .replace(/\b(?:safe|unsafe|malicious|clean|verified)\b/gi, "[omitted]")
     .replace(
       /[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/gu,
       (character) =>
@@ -60,7 +63,7 @@ export function jsonOutput(value: unknown): string {
             ? displayText(item)
             : item,
       2,
-    ).replace(/\b(?:safe|unsafe|malicious|clean)\b/gi, "[omitted]") +
+    ).replace(/\b(?:safe|unsafe|malicious|clean|verified)\b/gi, "[omitted]") +
     "\n"
   );
 }
@@ -97,6 +100,7 @@ export function summarizeReport(
     ...target,
     outcome: "completed",
     status: report.status,
+    triage: computeTriage(report),
     metadataSignals: (report.metadataSignals ?? []).map((signal) =>
       metadataSignalSchema.parse(signal),
     ),
@@ -121,6 +125,14 @@ export function humanOutput(document: CliDocument): string {
       lines.push(`  ${displayText(result.error)}`);
       continue;
     }
+    lines.push(`  Triage: ${result.triage.tier}`);
+    for (const reason of result.triage.reasons)
+      lines.push(
+        `    ${displayText(reason.id)} [${reason.source}]: ${displayText(reason.title)}`,
+        `      ${displayText(reason.detail)}`,
+        `      Evidence: ${displayText(reason.evidenceRef)}`,
+      );
+    lines.push(`  ${result.triage.disclaimer}`);
     lines.push(`  Metadata signals: ${result.metadataSignals.length}`);
     for (const signal of result.metadataSignals)
       lines.push(
@@ -152,5 +164,9 @@ export function humanOutput(document: CliDocument): string {
     "",
     `Completed: ${document.summary.completed}; failed: ${document.summary.failed}; skipped: ${document.summary.skipped}.`,
   );
+  if (document.triageSummary)
+    lines.push(
+      `Triage totals: needs-review: ${document.triageSummary["needs-review"]}; no-notable-changes: ${document.triageSummary["no-notable-changes"]}; incomplete: ${document.triageSummary.incomplete}.`,
+    );
   return lines.join("\n") + "\n";
 }

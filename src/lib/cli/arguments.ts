@@ -5,19 +5,21 @@ import { comparisonInputSchema } from "@/lib/validation";
 export const CLI_HELP = `DependencyGuard static analysis
 
 Usage:
-  dg check <package> <fromVersion> <toVersion> [--json] [--out <file>]
-  dg lockfile <oldLockfile> <newLockfile> [--json] [--out <file>] [--include-dev]
+  dg check <package> <fromVersion> <toVersion> [--json] [--out <file>] [--fail-on review|incomplete]
+  dg lockfile <oldLockfile> <newLockfile> [--json] [--out <file>] [--include-dev] [--fail-on review|incomplete]
   dg --help
 
 Options:
   --json         Print one JSON summary document; progress goes to stderr.
   --out <file>   Also save the selected output format to a new file.
   --include-dev Include development packages in lockfile comparisons.
+  --fail-on     review: exit 3 on needs-review; incomplete: also on incomplete.
   --help, -h    Show this help.
 
 Analyses run sequentially. Assessment: INCONCLUSIVE.
 Added packages without a trusted baseline are reported as analysis failures.
 Exit codes: 0 completed; 1 usage/file error; 2 package analysis failure.
+Exit 3 is opt-in for the selected triage threshold; exit 2 takes precedence.
 For JSON through npm, use: npm --silent run dg -- <command> ... --json
 `;
 
@@ -38,6 +40,7 @@ export type CliOptions =
       command: "check";
       json: boolean;
       out?: string;
+      failOn?: "review" | "incomplete";
       name: string;
       from: string;
       to: string;
@@ -46,6 +49,7 @@ export type CliOptions =
       command: "lockfile";
       json: boolean;
       out?: string;
+      failOn?: "review" | "incomplete";
       oldFile: string;
       newFile: string;
       includeDev: boolean;
@@ -62,6 +66,7 @@ function readArgs(args: string[]) {
         json: { type: "boolean" },
         out: { type: "string" },
         "include-dev": { type: "boolean" },
+        "fail-on": { type: "string" },
         help: { type: "boolean", short: "h" },
       },
     });
@@ -88,6 +93,7 @@ export function parseCliArgs(args: string[]): CliOptions {
     if (
       values.out !== undefined ||
       values["include-dev"] ||
+      values["fail-on"] !== undefined ||
       rest.length ||
       (command && command !== "check" && command !== "lockfile")
     )
@@ -101,6 +107,9 @@ export function parseCliArgs(args: string[]): CliOptions {
     (!values.out.trim() || values.out.includes("\0"))
   )
     throw new CliInputError("Provide a non-empty output file path.");
+  const failOn = values["fail-on"];
+  if (failOn !== undefined && failOn !== "review" && failOn !== "incomplete")
+    throw new CliInputError("--fail-on requires review or incomplete.");
   if (
     command === "check" &&
     rest.length === 3 &&
@@ -119,6 +128,7 @@ export function parseCliArgs(args: string[]): CliOptions {
       command,
       json,
       out: values.out,
+      failOn,
       ...pair.data,
       from: pair.data.from,
     };
@@ -132,6 +142,7 @@ export function parseCliArgs(args: string[]): CliOptions {
       command,
       json,
       out: values.out,
+      failOn,
       oldFile: rest[0],
       newFile: rest[1],
       includeDev: values["include-dev"] ?? false,

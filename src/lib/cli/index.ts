@@ -25,7 +25,7 @@ export type CliAnalyzer = (
   target: CliTarget,
   progress: (message: string) => void,
 ) => Promise<StaticAnalysisReport>;
-export type CliExitCode = 0 | 1 | 2;
+export type CliExitCode = 0 | 1 | 2 | 3;
 class CliFileError extends Error {}
 
 function compareText(a: string, b: string) {
@@ -102,6 +102,7 @@ export async function runCli(
     "--json",
   );
   let out: string | undefined;
+  let failOn: "review" | "incomplete" | undefined;
   let exitCode: CliExitCode = 0;
   const document: CliDocument = {
     command: null,
@@ -122,6 +123,7 @@ export async function runCli(
     }
     document.command = options.command;
     out = options.out;
+    failOn = options.failOn;
     let targets: CliTarget[];
     if (options.command === "check") {
       targets = [
@@ -215,6 +217,27 @@ export async function runCli(
       .length,
     skipped: document.skipped.length,
   };
+  if (document.command === "lockfile") {
+    document.triageSummary = {
+      "needs-review": 0,
+      "no-notable-changes": 0,
+      incomplete: 0,
+    };
+    for (const result of document.results)
+      if (result.outcome === "completed")
+        document.triageSummary[result.triage.tier]++;
+  }
+  if (
+    exitCode === 0 &&
+    failOn !== undefined &&
+    document.results.some(
+      (result) =>
+        result.outcome === "completed" &&
+        (result.triage.tier === "needs-review" ||
+          (failOn === "incomplete" && result.triage.tier === "incomplete")),
+    )
+  )
+    exitCode = 3;
   const format = () => (json ? jsonOutput(document) : humanOutput(document));
   let output = format();
   if (out !== undefined) {

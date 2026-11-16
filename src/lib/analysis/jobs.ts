@@ -3,6 +3,7 @@ import path from "node:path";
 import { AnalysisStore, JobLimitError } from "@/lib/analysis/store";
 import { fetchRelease, fetchVersionMetadata } from "@/lib/analysis/registry";
 import { computeMetadataSignals } from "@/lib/analysis/metadata-signals";
+import { computeTriage } from "@/lib/analysis/triage";
 import { fetchSnapshot } from "@/lib/analysis/archive";
 import { compareSnapshots } from "@/lib/analysis/compare";
 import { AnalysisInputError } from "@/lib/analysis/errors";
@@ -107,7 +108,7 @@ export class AnalysisJobs {
       const report = await this.pipeline(entry.job, async (stage) =>
         update({ status: "running", stage }),
       );
-      await this.store.saveReport(report);
+      await this.store.saveReport({ ...report, triage: computeTriage(report) });
       await update({ status: "completed", stage: 5 });
     } catch (error) {
       const message =
