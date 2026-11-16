@@ -51,7 +51,9 @@ it("attaches metadataSignals to a real pipeline report while every existing fiel
     .fn()
     .mockResolvedValueOnce(Response.json(fixture.versions["1.0.0"]))
     .mockResolvedValueOnce(Response.json(fixture.versions["1.1.0"]))
+    .mockResolvedValueOnce(Response.json(fixture.versions["1.0.0"]))
     .mockResolvedValueOnce(Response.json(fixture))
+    .mockResolvedValueOnce(Response.json(fixture.versions["1.1.0"]))
     .mockResolvedValueOnce(Response.json(fixture));
   vi.stubGlobal("fetch", fetchMock);
   const job: AnalysisJob = {
@@ -85,5 +87,5 @@ it("attaches metadataSignals to a real pipeline report while every existing fiel
   expect(report.riskScore).toBeNull();
   expect(report.status).toBe("INCONCLUSIVE");
   expect(progress.mock.calls.map(([stage]) => stage)).toEqual([0, 1, 2, 3, 4]);
-  expect(fetchMock).toHaveBeenCalledTimes(4);
+  expect(fetchMock).toHaveBeenCalledTimes(6);
 });

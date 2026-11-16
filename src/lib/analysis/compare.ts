@@ -9,6 +9,7 @@ import type {
   StaticEvidence,
 } from "@/lib/types/static-analysis";
 import type { ComparisonInput } from "@/lib/validation";
+import type { SkipBreakdown } from "./coverage";
 
 const MAX_ITEMS = 200;
 const MAX_SOURCE_BYTES = 256 * 1024;
@@ -80,6 +81,7 @@ type RuleScan = { count: number; matches: Match[] };
 type Scan = {
   files: Map<string, RuleScan[]>;
   skipped: number;
+  skipBreakdown: SkipBreakdown;
   limited: boolean;
   notes: string[];
 };
@@ -212,7 +214,18 @@ function scanSnapshot(snapshot: PackageSnapshot, role: string): Scan {
         `${role}: further archive warnings omitted from coverage notes.`,
       );
   }
-  return { files, skipped, limited, notes };
+  return {
+    files,
+    skipped,
+    limited,
+    notes,
+    skipBreakdown: {
+      nonSource: reasons.nonSource,
+      sourceUnavailable: reasons.unavailable,
+      sourceOversized: reasons.oversized,
+      sourceBudget: reasons.budget,
+    },
+  };
 }
 
 function manifestFile(snapshot: PackageSnapshot): ArchiveFile | undefined {
@@ -564,6 +577,19 @@ export function compareSnapshots(
       trustedFilesScanned: oldScan.files.size,
       candidateFilesScanned: newScan.files.size,
       skippedFiles: oldScan.skipped + newScan.skipped,
+      skipBreakdown: {
+        nonSource:
+          oldScan.skipBreakdown.nonSource + newScan.skipBreakdown.nonSource,
+        sourceUnavailable:
+          oldScan.skipBreakdown.sourceUnavailable +
+          newScan.skipBreakdown.sourceUnavailable,
+        sourceOversized:
+          oldScan.skipBreakdown.sourceOversized +
+          newScan.skipBreakdown.sourceOversized,
+        sourceBudget:
+          oldScan.skipBreakdown.sourceBudget +
+          newScan.skipBreakdown.sourceBudget,
+      },
       truncated: outputTruncated || oldScan.limited || newScan.limited,
       notes,
     },

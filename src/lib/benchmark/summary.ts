@@ -1,6 +1,16 @@
 import { TRIAGE_DISCLAIMER } from "@/lib/analysis/triage";
 import { escapeCommentText } from "@/lib/github/escape";
 import { tiers, type Measurement } from "./measure";
+import { displayText } from "@/lib/cli/output";
+
+function reasonId(value: string) {
+  const text = displayText(value);
+  // Normal internal IDs are readable in raw Markdown. Unexpected punctuation
+  // uses the existing inert renderer so it cannot break a table or add links.
+  return /^[A-Za-z0-9:_-]+$/.test(text)
+    ? `\`${text}\``
+    : escapeCommentText(text);
+}
 
 /** Presentation only. Raw report/evidence text is not rendered in this summary. */
 export function renderBenchmarkSummary(measurement: Measurement): string {
@@ -30,8 +40,23 @@ export function renderBenchmarkSummary(measurement: Measurement): string {
     "| --- | ---: |",
   );
   for (const reason of a.topReasons)
-    lines.push(`| ${escapeCommentText(reason.id)} | ${reason.count} |`);
+    lines.push(`| ${reasonId(reason.id)} | ${reason.count} |`);
   if (!a.topReasons.length) lines.push("| None recorded | 0 |");
+  if (measurement.replayLimitations?.length) {
+    lines.push(
+      "",
+      "## Replay limitations",
+      "",
+      `${measurement.replayLimitations.length} pairs require reacquisition for skipped-file classification. Their conservative legacy triage is retained.`,
+      "",
+      "| Pair | Detail |",
+      "| --- | --- |",
+    );
+    for (const limitation of measurement.replayLimitations)
+      lines.push(
+        `| ${escapeCommentText(`${limitation.entry.name} ${limitation.entry.from} -> ${limitation.entry.to}`)} | ${escapeCommentText(limitation.detail)} |`,
+      );
+  }
   const failures = entries.filter((entry) => entry.outcome === "failed");
   if (failures.length) {
     lines.push(

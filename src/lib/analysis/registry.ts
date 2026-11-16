@@ -171,59 +171,66 @@ function validateReleaseInput(packageName: string, version: string) {
   }
 }
 
-/** Fetch only the selected version's signal inputs from a full packument.
- * Reuses the existing bounded, fixed-origin transport. Package-level current
- * maintainers are intentionally not substituted for version-level history.
+/** Version manifests supply comparison fields. The full packument is optional,
+ * used only for authoritative publication time under the same 2 MiB cap.
+ * Missing optional metadata never invalidates an archive comparison.
  */
 export async function fetchVersionMetadata(
   packageName: string,
   version: string,
 ): Promise<VersionMetadata> {
   validateReleaseInput(packageName, version);
-  const bytes = await fetchRegistryBytes(
-    `https://registry.npmjs.org/${encodeURIComponent(packageName)}`,
-    REGISTRY_LIMITS.metadataBytes,
-    "metadata",
-  );
-  let value: unknown;
+  const url = `https://registry.npmjs.org/${encodeURIComponent(packageName)}`;
+  let selected: VersionMetadata;
   try {
-    value = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
+    const bytes = await fetchRegistryBytes(
+      `${url}/${encodeURIComponent(version)}`,
+      REGISTRY_LIMITS.metadataBytes,
+      "metadata",
+    );
+    // Availability flags belong to this client, not publisher-supplied fields.
+    // Publication time is accepted only from the packument below.
+    selected = versionMetadataSchema
+      .omit({
+        time: true,
+        publicationTimeUnavailable: true,
+        metadataUnavailable: true,
+      })
+      .parse(
+        JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes)),
+      );
+    if (selected.name !== packageName || selected.version !== version)
+      throw new Error("Metadata identity mismatch.");
   } catch {
-    throw new AnalysisInputError(
-      "The npm registry returned invalid package metadata.",
-    );
+    return {
+      name: packageName,
+      version,
+      metadataUnavailable: true,
+      publicationTimeUnavailable: true,
+    };
   }
-  const packument = z
-    .object({
-      name: z.string(),
-      versions: z.record(z.string(), z.unknown()),
-      time: z.record(z.string(), z.unknown()).nullish().catch(undefined),
-    })
-    .safeParse(value);
-  if (!packument.success || packument.data.name !== packageName)
-    throw new AnalysisInputError(
-      "The npm registry returned unsupported or mismatched package metadata.",
+  try {
+    const bytes = await fetchRegistryBytes(
+      url,
+      REGISTRY_LIMITS.metadataBytes,
+      "metadata",
     );
-  if (!Object.hasOwn(packument.data.versions, version))
-    throw new AnalysisInputError(
-      "The requested version is missing from npm package metadata.",
-    );
-  const selected = versionMetadataSchema.safeParse(
-    packument.data.versions[version],
-  );
-  if (
-    !selected.success ||
-    selected.data.name !== packageName ||
-    selected.data.version !== version
-  )
-    throw new AnalysisInputError(
-      "The npm registry release identity does not match the requested package and version.",
-    );
-  const published = packument.data.time?.[version];
-  return {
-    ...selected.data,
-    time: typeof published === "string" ? { [version]: published } : undefined,
-  };
+    const packument = z
+      .object({
+        name: z.literal(packageName),
+        time: z.record(z.string(), z.unknown()),
+      })
+      .parse(
+        JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes)),
+      );
+    const published = z
+      .string()
+      .datetime({ offset: true })
+      .parse(packument.time[version]);
+    return { ...selected, time: { [version]: published } };
+  } catch {
+    return { ...selected, publicationTimeUnavailable: true };
+  }
 }
 
 export async function fetchRelease(

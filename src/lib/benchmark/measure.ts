@@ -2,6 +2,7 @@ import { computeTriage, type Triage } from "@/lib/analysis/triage";
 import type { CliAnalyzer } from "@/lib/cli";
 import { CliAnalysisError } from "@/lib/cli/arguments";
 import { displayText } from "@/lib/cli/output";
+import { usableSkipBreakdown } from "@/lib/analysis/coverage";
 import {
   benchmarkEntrySchema,
   corpusSchema,
@@ -69,6 +70,7 @@ export type Aggregates = ReturnType<typeof aggregate>;
 export interface Measurement {
   entries: BenchmarkEntry[];
   aggregates: Aggregates;
+  replayLimitations?: { entry: CorpusEntry; detail: string }[];
 }
 
 function completed(entry: CorpusEntry, raw: unknown): BenchmarkEntry {
@@ -143,5 +145,22 @@ export function replayBenchmark(saved: unknown): Measurement {
       ? completed(result.entry, result.report)
       : { ...result, error: displayText(result.error) },
   );
-  return { entries, aggregates: aggregate(entries) };
+  const replayLimitations = ordered(parsed.entries).flatMap((result) =>
+    result.outcome === "completed" &&
+    result.report.coverage.skippedFiles > 0 &&
+    !usableSkipBreakdown(result.report.coverage)
+      ? [
+          {
+            entry: result.entry,
+            detail:
+              "Skipped-file kinds cannot be recomputed: this saved report lacks a consistent skipBreakdown. Conservative legacy triage retained; reacquire the pair for the new distinction.",
+          },
+        ]
+      : [],
+  );
+  return {
+    entries,
+    aggregates: aggregate(entries),
+    ...(replayLimitations.length ? { replayLimitations } : {}),
+  };
 }

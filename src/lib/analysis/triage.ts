@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { MetadataSignal } from "./metadata-signals";
+import { usableSkipBreakdown } from "./coverage";
 import type { StaticAnalysisReport } from "@/lib/types/static-analysis";
 
 export const TRIAGE_DISCLAIMER =
@@ -87,19 +88,34 @@ export function computeTriage(input: TriageInput): Triage {
   let incomplete = false;
   let review = false;
 
-  // These are the only structured coverage-loss indicators in current reports.
-  // Generic limitations/notes also describe complete scans, so their presence
-  // alone must not mark a comparison incomplete. Counts include non-source files.
-  if (input.coverage.skippedFiles > 0) {
+  const breakdown = usableSkipBreakdown(input.coverage);
+  const sourceSkipped = breakdown
+    ? breakdown.sourceUnavailable +
+      breakdown.sourceOversized +
+      breakdown.sourceBudget
+    : input.coverage.skippedFiles;
+  if (sourceSkipped > 0) {
     incomplete = true;
     add({
       id: "scan-skipped-files",
       source: "scan-limitation",
       title: "Files excluded from source scanning",
-      detail: `${input.coverage.skippedFiles} files were skipped across the two releases. The total includes non-source files; coverage notes describe exclusions.`,
-      evidenceRef: "#/coverage/skippedFiles",
+      detail: breakdown
+        ? `${sourceSkipped} source files were excluded because their text was unavailable, oversized, or beyond the scan budget.`
+        : `${sourceSkipped} files were skipped. File-kind metadata unavailable in this report; reacquisition is needed to distinguish source exclusions.`,
+      evidenceRef: breakdown
+        ? "#/coverage/skipBreakdown"
+        : "#/coverage/skippedFiles",
     });
   }
+  if (breakdown && breakdown.nonSource > 0)
+    add({
+      id: "scan-skipped-nonsource",
+      source: "scan-limitation",
+      title: "Non-source files outside lexical scanning (information only)",
+      detail: `${breakdown.nonSource} non-source files were excluded from source rules. This includes documents, manifests, lockfiles, media, fonts, WebAssembly and native content; manifest fields are compared separately.`,
+      evidenceRef: "#/coverage/skipBreakdown/nonSource",
+    });
   if (input.coverage.truncated) {
     incomplete = true;
     add({
@@ -121,6 +137,12 @@ export function computeTriage(input: TriageInput): Triage {
       id: signal.id,
       source: "metadata",
       ...metadataReasons[signal.id],
+      ...(signal.id === "recent-release" && signal.evidence.publishedAt === null
+        ? {
+            title: "Publication time unavailable (information only)",
+            detail: "metadata unavailable",
+          }
+        : {}),
       evidenceRef: signal.id,
     });
   }

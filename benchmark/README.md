@@ -35,11 +35,13 @@ The short Markdown output includes the tier table, five leading reason IDs, fail
 
 Replay validates saved reports and corpus identities, ignores stored aggregates/derived tiers, and calls current `computeTriage` rules. The same saved reports and rules yield deep-equal measurement entries and aggregates; run timestamps/durations are audit metadata and can differ. Saved metadata signals, including recency, remain fixed to the original observation. Changes to scanning or acquisition cannot be evaluated by replay. Keep the source revision with results when comparing rule changes; `toolVersion` alone may not distinguish working-tree edits.
 
+New reports include `coverage.skipBreakdown`, separating non-source exclusions from unavailable, oversized, or budget-excluded source files. Replay uses those counts to emit informational `scan-skipped-nonsource` without triggering `incomplete`. Source exclusions and truncation remain incomplete-triggering. Older saved reports with nonzero skipped totals and no consistent breakdown retain conservative legacy triage: JSON `replayLimitations` and a Markdown section list each pair requiring reacquisition. Replay does not guess file kinds from prose or retry those pairs. Reports with zero skipped files need no additional classification. Ordinary reason IDs appear as readable Markdown code spans; unexpected punctuation uses the existing escaped renderer.
+
 ## Inert fixtures and known gap
 
 Eight hand-authored JSON fixtures live in `src/tests/fixtures/synthetic/`. They model added postinstall declarations, network references, environment references, dynamic-code references, publisher changes, dropped attestations, added dependencies, and an indirect call. They contain report-level records and, where relevant, source **comments only**. Tests never evaluate those strings or invoke their declarations. The source-shape tests exercise the existing lexical scanner on comments; that scanner can match comments and does not establish execution.
 
-The indirect-call fixture is a **documented known miss**: computed member lookup plus alias invocation yields zero network matches, no reasons, and `no-notable-changes` in the isolated source-only fixture. Its test records current behavior, not successful detection. The fixture has no excluded files so coverage does not obscure the gap. Full npm packages often include non-source files and can instead receive `incomplete` for that separate reason.
+The indirect-call fixture is a **documented known miss**: computed member lookup plus alias invocation yields zero network matches, no reasons, and `no-notable-changes` in the isolated source-only fixture. Its test records current behavior, not successful detection. The fixture has no excluded files so coverage does not obscure the gap. Non-source exclusions are informational; source exclusions or truncation can independently produce `incomplete`.
 
 Run the offline checks:
 
@@ -47,6 +49,6 @@ Run the offline checks:
 npx vitest run src/tests/benchmark.test.ts src/tests/benchmark-synthetic.test.ts
 ```
 
-This small selected corpus is not representative ground truth for actual attacks. Install declarations, native binaries, bundled files, metadata variation, regex matches in comments and acquisition limits can all affect results. Current metadata requests have a 2 MiB packument cap, so popular packages with long histories may fail before source comparison. Results from only completed pairs have selection bias; keep failures and coverage reasons visible. There is no ground-truth attack corpus, no execution evidence, and no detection-rate claim.
+This small selected corpus is not representative ground truth for actual attacks. Install declarations, native binaries, bundled files, metadata variation, regex matches in comments and acquisition limits can all affect results. Metadata comparison uses per-version manifests with a hard 2 MiB response cap. The full packument is optional and used only for publication time under that same cap; unavailable time emits informational `recent-release` with detail `metadata unavailable`. Genuine release/archive acquisition failures remain failures, including the unchanged 2,000-entry archive limit encountered by `core-js` in this corpus. Results from only completed pairs have selection bias; keep failures and coverage reasons visible. There is no ground-truth attack corpus, no execution evidence, and no detection-rate claim.
 
 This tier reflects only the checks listed, can miss obfuscated or indirect behavior, and is not a safety determination.

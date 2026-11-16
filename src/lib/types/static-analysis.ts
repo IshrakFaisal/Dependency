@@ -2,6 +2,7 @@ import type { FindingStatus, Severity } from "@/lib/types";
 import type { ComparisonInput } from "@/lib/validation";
 import type { MetadataSignal } from "@/lib/analysis/metadata-signals";
 import type { Triage } from "@/lib/analysis/triage";
+import type { SkipBreakdown } from "@/lib/analysis/coverage";
 
 export interface RegistryRelease {
   name: string;
@@ -122,6 +123,7 @@ export interface StaticAnalysisReport {
     trustedFilesScanned: number;
     candidateFilesScanned: number;
     skippedFiles: number;
+    skipBreakdown?: SkipBreakdown;
     truncated: boolean;
     notes: string[];
   };

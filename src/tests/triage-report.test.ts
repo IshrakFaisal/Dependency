@@ -121,7 +121,9 @@ it.each([
     }
     const { report, triage } = compare(old, next);
     expect(report.coverage).toMatchObject({ skippedFiles: 2, truncated });
-    expect(triage.tier).toBe("incomplete");
+    expect(triage.tier).toBe(
+      name === "non-source" ? "no-notable-changes" : "incomplete",
+    );
     expect(triage.reasons).toHaveLength(truncated ? 2 : 1);
   },
 );

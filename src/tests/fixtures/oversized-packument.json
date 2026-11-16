@@ -1,0 +1,8 @@
+{
+  "name": "@dg-fixture/metadata-signals",
+  "time": {
+    "1.0.0": "2026-11-01T00:00:00.000Z",
+    "1.1.0": "2026-11-14T00:00:00.000Z"
+  },
+  "padding": { "field": "readme", "character": "x", "bytes": 2097153 }
+}

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { metadataSignalSchema } from "@/lib/analysis/metadata-signals";
 import { triageSchema } from "@/lib/analysis/triage";
+import { skipBreakdownSchema } from "@/lib/analysis/coverage";
 import { comparisonInputSchema } from "@/lib/validation";
 import type { StaticAnalysisReport } from "@/lib/types/static-analysis";
 
@@ -142,6 +143,7 @@ export const replayReportFieldsSchema = z.object({
     trustedFilesScanned: count,
     candidateFilesScanned: count,
     skippedFiles: count,
+    skipBreakdown: skipBreakdownSchema.optional(),
     truncated: z.boolean(),
     notes: z.array(z.string()),
   }),

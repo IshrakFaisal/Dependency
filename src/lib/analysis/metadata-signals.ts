@@ -28,6 +28,8 @@ export const versionMetadataSchema = z.object({
     .nullish()
     .catch(undefined),
   time: strings.nullish().catch(undefined),
+  publicationTimeUnavailable: z.boolean().optional(),
+  metadataUnavailable: z.boolean().optional(),
 });
 export type VersionMetadata = z.infer<typeof versionMetadataSchema>;
 
@@ -86,15 +88,23 @@ export const metadataSignalSchema = z.discriminatedUnion("id", [
   z.strictObject({
     ...common,
     id: z.literal("recent-release"),
-    evidence: z.strictObject({
-      version: z.string(),
-      publishedAt: z.string().datetime(),
-      comparedAt: z.string().datetime(),
-      ageMs: z
-        .number()
-        .nonnegative()
-        .lt(7 * 24 * 60 * 60 * 1000),
-    }),
+    evidence: z.union([
+      z.strictObject({
+        version: z.string(),
+        publishedAt: z.string().datetime(),
+        comparedAt: z.string().datetime(),
+        ageMs: z
+          .number()
+          .nonnegative()
+          .lt(7 * 24 * 60 * 60 * 1000),
+      }),
+      z.strictObject({
+        version: z.string(),
+        publishedAt: z.null(),
+        comparedAt: z.string().datetime(),
+        ageMs: z.null(),
+      }),
+    ]),
   }),
 ]);
 export type MetadataSignal = z.infer<typeof metadataSignalSchema>;
@@ -133,6 +143,19 @@ export function computeMetadataSignals(
 ): MetadataSignal[] {
   const oldData = versionMetadataSchema.safeParse(oldMeta).data ?? {};
   const newData = versionMetadataSchema.safeParse(newMeta).data ?? {};
+  // A failed optional metadata acquisition supplies no comparison baseline.
+  // Preserve the explicit unknown state instead of inferring removed fields.
+  if (oldData.metadataUnavailable || newData.metadataUnavailable)
+    return computeMetadataSignals(
+      {},
+      {
+        version: newData.version,
+        time: newData.time,
+        publicationTimeUnavailable:
+          newData.metadataUnavailable || newData.publicationTimeUnavailable,
+      },
+      now,
+    );
   const signals: MetadataSignal[] = [];
   const changes: Extract<
     MetadataSignal,
@@ -226,6 +249,23 @@ export function computeMetadataSignals(
         ? now
         : timestamp(now);
   const ageMs = compared - published;
+  if (
+    newData.publicationTimeUnavailable &&
+    !Number.isFinite(published) &&
+    Number.isFinite(compared)
+  )
+    signals.push({
+      id: "recent-release",
+      severity: "info",
+      title: "Publication time unavailable",
+      detail: "metadata unavailable",
+      evidence: {
+        version: newData.version ?? "metadata unavailable",
+        publishedAt: null,
+        comparedAt: new Date(compared).toISOString(),
+        ageMs: null,
+      },
+    });
   if (
     Number.isFinite(compared) &&
     Number.isFinite(published) &&
