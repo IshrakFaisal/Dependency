@@ -25,6 +25,26 @@ npm run build
 npm start
 ```
 
+## Static analysis CLI
+
+The CLI calls the existing static registry/archive pipeline directly and waits for completion without a web server or persisted web jobs. It never launches runtime probes or AI investigation. Real reports remain **INCONCLUSIVE**, with `riskScore: null`; CLI summaries omit scores and show metadata signals, static finding counts by category, coverage and limitations.
+
+```sh
+npm run dg -- --help
+npm run dg -- check is-number 7.0.0 7.0.0
+npm --silent run dg -- check example-package 1.0.0 1.1.0 --json --out report.json
+npm run dg -- lockfile old-package-lock.json new-package-lock.json
+npm run dg -- lockfile old-package-lock.json new-package-lock.json --include-dev
+```
+
+Use actual published versions for live checks; `example-package` illustrates syntax. The entry point uses the existing worker convention: `node --env-file-if-exists=.env.local --conditions=react-server --import tsx scripts/dependencyguard.ts`. Web feature flags do not gate this explicit operator command. Package code is never executed.
+
+Lockfile v2/v3 changes run sequentially, ordered by package name then installation path. Development packages are excluded by default; root, workspace/link, non-registry, removed and excluded dev entries are listed with reasons. Repeated installation paths remain separate. Added packages are passed through selection with `from: null`; the existing two-version runner cannot compare them without a trusted baseline, so they produce a per-package failure and the remaining batch continues. Use `check` with an explicit trusted version for those packages.
+
+`--json` writes one summary document to stdout; progress and diagnostics use stderr. Use `npm --silent run dg` when capturing JSON to suppress npm's own command banner. `--out` also saves the same output format to a **new** file in an existing directory; existing files are never overwritten. CLI output escapes terminal controls and replaces verdict vocabulary in package-provided text with `[omitted]`; original analysis reports are unchanged.
+
+Exit codes: **0** all selected analyses completed (including an empty batch); **1** usage, input-file or output-file error; **2** at least one package analysis failed, with other results retained. Findings and metadata signals do not affect exit codes. An output-file error takes precedence over package failures. Tests inject an analyzer and file I/O; they do not contact npm. The CLI adds no concurrency, cache, retries, runtime execution or AI calls.
+
 ## Phase 4: evidence-linked AI investigation
 
 The report's **AI investigation** panel explains static source changes, presents possible benign alternatives, and suggests manual checks. It is disabled by default. There are no automatic provider calls when opening reports or running analyses. The original deterministic assessment remains **INCONCLUSIVE**, with no risk score, regardless of model output. Demo AI text remains a separate fictional fixture.
@@ -115,7 +135,7 @@ New real pipeline reports also contain `metadataSignals`; older saved reports ma
 
 Inputs contain version-level `scripts`, `_npmUser`, `maintainers`, `dist.attestations`, `dependencies`, and the packument's `time` map. Only preinstall/install/postinstall/prepare additions or exact content changes are included. Dependency signals list added names from `dependencies`, excluding range edits and optional/dev/peer-only declarations. People are identified by account name, falling back to normalized email; maintainer order/duplicates and contact-email edits for the same named account are ignored. Missing publisher or maintainer baselines are skipped. Missing time is skipped; future timestamps and ages of exactly seven days are not recent. Attestation absence is reported only when the old version advertised attestation metadata; no attestation is downloaded or verified.
 
-The server-only `fetchVersionMetadata(packageName, version)` helper reuses the existing registry transport to select one version from the full packument and its exact `time[version]` entry. Current top-level maintainers are not treated as historical version ownership. Each analysis makes two additional sequential metadata requests under the existing 2 MiB / 15-second limits; a failed or oversized packument fails the job through existing error handling. No new dependencies, UI, scoring, runtime, investigation, or demo behavior are added. Tests use synthetic fixture JSON and mocked HTTP; live registry behavior for this helper has not been verified.
+The server-only `fetchVersionMetadata(packageName, version)` helper reuses the existing registry transport to select one version from the full packument and its exact `time[version]` entry. Current top-level maintainers are not treated as historical version ownership. Each analysis makes two additional sequential metadata requests under the existing 2 MiB / 15-second limits; a failed or oversized packument fails the job through existing error handling. No new dependencies, UI, scoring, runtime, investigation, or demo behavior are added. Tests use synthetic fixture JSON and mocked HTTP; the CLI smoke check also exercises this helper against the live registry.
 
 ### Lockfile diffs
 

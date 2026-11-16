@@ -10,6 +10,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "dg": "node --env-file-if-exists=.env.local --conditions=react-server --import tsx scripts/dependencyguard.ts",
     "runtime:probe": "node --env-file-if-exists=.env.local --conditions=react-server --import tsx scripts/runtime-probe.ts",
     "runtime:check": "node --env-file-if-exists=.env.local --conditions=react-server --import tsx scripts/runtime-probe.ts --check",
     "runtime:selftest": "node --env-file-if-exists=.env.local --conditions=react-server --import tsx sandbox/selftest.ts",
