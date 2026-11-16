@@ -117,6 +117,12 @@ Inputs contain version-level `scripts`, `_npmUser`, `maintainers`, `dist.attesta
 
 The server-only `fetchVersionMetadata(packageName, version)` helper reuses the existing registry transport to select one version from the full packument and its exact `time[version]` entry. Current top-level maintainers are not treated as historical version ownership. Each analysis makes two additional sequential metadata requests under the existing 2 MiB / 15-second limits; a failed or oversized packument fails the job through existing error handling. No new dependencies, UI, scoring, runtime, investigation, or demo behavior are added. Tests use synthetic fixture JSON and mocked HTTP; live registry behavior for this helper has not been verified.
 
+### Lockfile diffs
+
+`diffLockfiles(oldLock, newLock)` in `src/lib/lockfile/diff.ts` is a pure comparison for npm `package-lock.json` version 2 and 3 `packages` maps. It returns path-specific additions, removals, version changes, and skipped entries; it does not fetch, read files, inspect dependency trees, or affect any report, score, or verdict. Lockfile v1, unknown versions, malformed lockfiles, and missing package maps return a typed error result with empty arrays rather than throwing. The helper `selectAnalyzable(diff)` selects only changed and added registry package version pairs.
+
+Only `https://registry.npmjs.org/` package entries with exact versions are analyzable. The root entry, workspace/link entries, malformed paths, entries missing a version, and non-registry `git`, `file`, or other resolved URLs are recorded in `skipped`. Names come from the last `node_modules/` path segment, so nested and scoped packages retain their installation path. Duplicate names at distinct paths remain distinct. Output is sorted by name and path. No direct SemVer dependency is declared, so direction uses a documented minimal exact-SemVer comparator: numeric `major.minor.patch` and prerelease precedence are supported; ranges, tags, non-SemVer versions, and textual changes that compare equal are `other`.
+
 | Route                    | Purpose                                                     |
 | ------------------------ | ----------------------------------------------------------- |
 | `/`                      | Comparison form, recent local analyses, demo entry point    |

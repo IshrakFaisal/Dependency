@@ -1,0 +1,56 @@
+{
+  "name": "lockfile-fixture",
+  "lockfileVersion": 3,
+  "packages": {
+    "": { "name": "lockfile-fixture" },
+    "node_modules/added": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/added/-/added-1.0.0.tgz"
+    },
+    "node_modules/upgrade": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/upgrade/-/upgrade-2.0.0.tgz"
+    },
+    "node_modules/downgrade": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/downgrade/-/downgrade-2.0.0.tgz"
+    },
+    "node_modules/unchanged": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/unchanged/-/unchanged-1.0.0.tgz"
+    },
+    "node_modules/@scope/tool": {
+      "version": "1.1.0",
+      "resolved": "https://registry.npmjs.org/@scope/tool/-/tool-1.1.0.tgz"
+    },
+    "node_modules/parent/node_modules/nested": {
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/nested/-/nested-1.0.1.tgz"
+    },
+    "node_modules/dev-only": {
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/dev-only/-/dev-only-1.0.1.tgz",
+      "dev": true
+    },
+    "node_modules/one/node_modules/repeated": {
+      "version": "1.1.0",
+      "resolved": "https://registry.npmjs.org/repeated/-/repeated-1.1.0.tgz"
+    },
+    "node_modules/two/node_modules/repeated": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/repeated/-/repeated-1.0.0.tgz"
+    },
+    "node_modules/git-dependency": {
+      "version": "1.1.0",
+      "resolved": "git+https://github.com/example/fixture.git#def"
+    },
+    "node_modules/file-dependency": {
+      "version": "1.1.0",
+      "resolved": "file:../fixture-new"
+    },
+    "node_modules/link-dependency": {
+      "resolved": "file:../workspace",
+      "link": true
+    }
+  }
+}
