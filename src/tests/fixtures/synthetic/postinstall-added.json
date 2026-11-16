@@ -1,0 +1,44 @@
+{
+  "name": "synthetic-postinstall-pair",
+  "from": "1.0.0",
+  "to": "1.0.1",
+  "label": "synthetic-suspicious",
+  "notes": "Report-level declaration only. The command placeholder is data and is never installed or invoked.",
+  "metadata": {
+    "old": { "scripts": {} },
+    "new": { "scripts": { "postinstall": "[INERT DECLARATION ONLY]" } }
+  },
+  "report": {
+    "status": "INCONCLUSIVE",
+    "riskScore": null,
+    "metadataSignals": [
+      {
+        "id": "install-script-added",
+        "severity": "review",
+        "title": "Added declaration",
+        "detail": "Authored inert declaration.",
+        "evidence": {
+          "changes": [
+            {
+              "script": "postinstall",
+              "oldCommand": null,
+              "newCommand": "[INERT DECLARATION ONLY]"
+            }
+          ]
+        }
+      }
+    ],
+    "signalCounts": [],
+    "findings": [],
+    "evidence": [],
+    "fileChanges": [],
+    "coverage": {
+      "trustedFilesScanned": 1,
+      "candidateFilesScanned": 1,
+      "skippedFiles": 0,
+      "truncated": false,
+      "notes": ["Isolated report fixture."]
+    }
+  },
+  "expected": { "tier": "needs-review", "reasonIds": ["install-script-added"] }
+}

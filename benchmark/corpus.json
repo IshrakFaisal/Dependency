@@ -1,0 +1,212 @@
+[
+  {
+    "name": "react",
+    "from": "18.3.0",
+    "to": "18.3.1",
+    "label": "benign-update",
+    "notes": "UI runtime patch; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "react-dom",
+    "from": "18.3.0",
+    "to": "18.3.1",
+    "label": "benign-update",
+    "notes": "Renderer patch with bundled source; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "typescript",
+    "from": "5.7.2",
+    "to": "5.7.3",
+    "label": "benign-update",
+    "notes": "Compiler patch with large bundles and declaration files; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "lodash",
+    "from": "4.17.20",
+    "to": "4.17.21",
+    "label": "benign-update",
+    "notes": "Utility patch with many source files; no known incident for this pair in this seed corpus. This label does not exclude vulnerabilities."
+  },
+  {
+    "name": "axios",
+    "from": "1.7.8",
+    "to": "1.7.9",
+    "label": "benign-update",
+    "notes": "HTTP client patch with expected network references; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "express",
+    "from": "4.21.1",
+    "to": "4.21.2",
+    "label": "benign-update",
+    "notes": "HTTP framework patch; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "zod",
+    "from": "3.24.1",
+    "to": "3.24.2",
+    "label": "benign-update",
+    "notes": "Schema validation patch; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "chalk",
+    "from": "5.3.0",
+    "to": "5.4.1",
+    "label": "benign-update",
+    "notes": "Terminal formatting minor update; no known incident for these exact versions in this seed corpus. The label applies only to this pair."
+  },
+  {
+    "name": "debug",
+    "from": "4.3.6",
+    "to": "4.3.7",
+    "label": "benign-update",
+    "notes": "Logging patch with environment references; no known incident for these exact versions in this seed corpus. The label applies only to this pair."
+  },
+  {
+    "name": "@esbuild/linux-x64",
+    "from": "0.24.0",
+    "to": "0.24.2",
+    "label": "benign-update",
+    "notes": "Direct platform package containing the native esbuild binary; no known incident for this pair in this seed corpus. Binary bytes are inspected as archive data only."
+  },
+  {
+    "name": "semver",
+    "from": "7.6.2",
+    "to": "7.6.3",
+    "label": "benign-update",
+    "notes": "Version parser patch; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "nanoid",
+    "from": "3.3.7",
+    "to": "3.3.8",
+    "label": "benign-update",
+    "notes": "Identifier generator patch; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "uuid",
+    "from": "9.0.0",
+    "to": "9.0.1",
+    "label": "benign-update",
+    "notes": "Identifier library patch; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "dotenv",
+    "from": "16.4.5",
+    "to": "16.4.7",
+    "label": "benign-update",
+    "notes": "Environment loader patch with expected environment references; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "commander",
+    "from": "12.0.0",
+    "to": "12.1.0",
+    "label": "benign-update",
+    "notes": "CLI parser minor update; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "yargs",
+    "from": "17.7.1",
+    "to": "17.7.2",
+    "label": "benign-update",
+    "notes": "CLI parser patch; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "@img/sharp-linux-x64",
+    "from": "0.33.4",
+    "to": "0.33.5",
+    "label": "benign-update",
+    "notes": "Direct platform package containing a native image-library binding; no known incident for this pair in this seed corpus. Binary bytes are inspected as archive data only."
+  },
+  {
+    "name": "undici",
+    "from": "6.21.0",
+    "to": "6.21.1",
+    "label": "benign-update",
+    "notes": "HTTP implementation patch with expected network references; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "ws",
+    "from": "8.18.0",
+    "to": "8.18.1",
+    "label": "benign-update",
+    "notes": "WebSocket implementation patch; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "prettier",
+    "from": "3.4.1",
+    "to": "3.4.2",
+    "label": "benign-update",
+    "notes": "Formatter patch with large bundled parsers; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "webpack",
+    "from": "5.97.0",
+    "to": "5.97.1",
+    "label": "benign-update",
+    "notes": "Bundler patch with many source files; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "rollup",
+    "from": "4.29.0",
+    "to": "4.29.1",
+    "label": "benign-update",
+    "notes": "Bundler patch using optional platform-native packages; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "vite",
+    "from": "5.4.10",
+    "to": "5.4.11",
+    "label": "benign-update",
+    "notes": "Build tool patch with bundled source; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "esbuild",
+    "from": "0.24.0",
+    "to": "0.24.2",
+    "label": "benign-update",
+    "notes": "Native build tool with a postinstall declaration; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "sharp",
+    "from": "0.33.4",
+    "to": "0.33.5",
+    "label": "benign-update",
+    "notes": "Native image library with install declarations and optional binaries; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "@swc/core",
+    "from": "1.10.0",
+    "to": "1.10.1",
+    "label": "benign-update",
+    "notes": "Native compiler binding with a postinstall declaration; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "better-sqlite3",
+    "from": "11.7.0",
+    "to": "11.8.0",
+    "label": "benign-update",
+    "notes": "Native database binding with an install declaration; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "bcrypt",
+    "from": "5.1.0",
+    "to": "5.1.1",
+    "label": "benign-update",
+    "notes": "Native hashing binding with an install declaration; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "core-js",
+    "from": "3.39.0",
+    "to": "3.40.0",
+    "label": "benign-update",
+    "notes": "Polyfill minor update with many files and a postinstall declaration; no known incident for this pair in this seed corpus."
+  },
+  {
+    "name": "puppeteer",
+    "from": "23.10.1",
+    "to": "23.10.2",
+    "label": "benign-update",
+    "notes": "Browser tooling patch with a postinstall declaration; no known incident for this pair in this seed corpus. Browser binaries are not installed by analysis."
+  }
+]

@@ -1,0 +1,43 @@
+{
+  "name": "synthetic-provenance-pair",
+  "from": "1.0.0",
+  "to": "1.0.1",
+  "label": "synthetic-suspicious",
+  "notes": "Authored attestation-presence change; no attestation is fetched or validated.",
+  "metadata": {
+    "old": {
+      "dist": {
+        "attestations": { "url": "https://fixture.invalid/attestation" }
+      }
+    },
+    "new": { "dist": {} }
+  },
+  "report": {
+    "status": "INCONCLUSIVE",
+    "riskScore": null,
+    "metadataSignals": [
+      {
+        "id": "provenance-dropped",
+        "severity": "review",
+        "title": "Attestation absent",
+        "detail": "Authored presence change.",
+        "evidence": {
+          "oldAttestations": { "url": "https://fixture.invalid/attestation" },
+          "newAttestations": null
+        }
+      }
+    ],
+    "signalCounts": [],
+    "findings": [],
+    "evidence": [],
+    "fileChanges": [],
+    "coverage": {
+      "trustedFilesScanned": 1,
+      "candidateFilesScanned": 1,
+      "skippedFiles": 0,
+      "truncated": false,
+      "notes": ["Isolated report fixture."]
+    }
+  },
+  "expected": { "tier": "needs-review", "reasonIds": ["provenance-dropped"] }
+}

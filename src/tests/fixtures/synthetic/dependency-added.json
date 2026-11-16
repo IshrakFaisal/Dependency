@@ -1,0 +1,36 @@
+{
+  "name": "synthetic-dependency-pair",
+  "from": "1.0.0",
+  "to": "1.0.1",
+  "label": "synthetic-suspicious",
+  "notes": "Authored dependency declaration only; no dependency is resolved, installed or imported.",
+  "metadata": {
+    "old": { "dependencies": {} },
+    "new": { "dependencies": { "synthetic-helper": "1.0.0" } }
+  },
+  "report": {
+    "status": "INCONCLUSIVE",
+    "riskScore": null,
+    "metadataSignals": [
+      {
+        "id": "dependency-added",
+        "severity": "review",
+        "title": "Dependency added",
+        "detail": "Authored declaration change.",
+        "evidence": { "names": ["synthetic-helper"] }
+      }
+    ],
+    "signalCounts": [],
+    "findings": [],
+    "evidence": [],
+    "fileChanges": [],
+    "coverage": {
+      "trustedFilesScanned": 1,
+      "candidateFilesScanned": 1,
+      "skippedFiles": 0,
+      "truncated": false,
+      "notes": ["Isolated report fixture."]
+    }
+  },
+  "expected": { "tier": "needs-review", "reasonIds": ["dependency-added"] }
+}
