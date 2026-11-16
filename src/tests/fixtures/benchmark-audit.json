@@ -1,0 +1,502 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "entry": {
+        "name": "audit-limited",
+        "from": "1.0.0",
+        "to": "1.1.0",
+        "label": "benign-update",
+        "notes": "Hand-authored offline audit fixture."
+      },
+      "outcome": "completed",
+      "report": {
+        "id": "audit-limited",
+        "mode": "static",
+        "input": {
+          "packageName": "audit-limited",
+          "trustedVersion": "1.0.0",
+          "candidateVersion": "1.1.0"
+        },
+        "generatedAt": "2026-11-16T00:00:00.000Z",
+        "status": "INCONCLUSIVE",
+        "riskScore": null,
+        "summary": "Authored static report; no execution evidence.",
+        "releases": {
+          "trusted": {
+            "release": {
+              "name": "audit-limited",
+              "version": "1.0.0",
+              "description": "Authored audit fixture",
+              "license": "MIT",
+              "tarballUrl": "https://registry.npmjs.org/audit-limited/-/audit-limited-1.0.0.tgz",
+              "integrity": null,
+              "shasum": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "scripts": {},
+              "dependencies": {},
+              "optionalDependencies": {},
+              "peerDependencies": {},
+              "deprecated": null
+            },
+            "archiveSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "integrityVerified": "sha1",
+            "compressedBytes": 100,
+            "unpackedBytes": 200,
+            "warnings": [],
+            "fileCount": 4
+          },
+          "candidate": {
+            "release": {
+              "name": "audit-limited",
+              "version": "1.1.0",
+              "description": "Authored audit fixture",
+              "license": "MIT",
+              "tarballUrl": "https://registry.npmjs.org/audit-limited/-/audit-limited-1.1.0.tgz",
+              "integrity": null,
+              "shasum": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "scripts": {},
+              "dependencies": {},
+              "optionalDependencies": {},
+              "peerDependencies": {},
+              "deprecated": null
+            },
+            "archiveSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "integrityVerified": "sha1",
+            "compressedBytes": 100,
+            "unpackedBytes": 200,
+            "warnings": [],
+            "fileCount": 4
+          }
+        },
+        "metadataSignals": [],
+        "fileChanges": [],
+        "manifestChanges": [],
+        "findings": [],
+        "evidence": [],
+        "signalCounts": [
+          {
+            "category": "network",
+            "oldCount": 0,
+            "newCount": 0
+          }
+        ],
+        "coverage": {
+          "trustedFilesScanned": 1,
+          "candidateFilesScanned": 1,
+          "skippedFiles": 0,
+          "truncated": true,
+          "notes": []
+        },
+        "limitations": ["Static text only."]
+      },
+      "triage": {
+        "tier": "incomplete",
+        "reasons": [
+          {
+            "id": "scan-truncated",
+            "source": "scan-limitation",
+            "title": "Scan coverage was limited",
+            "detail": "Source scanning was limited.",
+            "evidenceRef": "#/coverage/truncated"
+          }
+        ],
+        "disclaimer": "This tier reflects only the checks listed, can miss obfuscated or indirect behavior, and is not a safety determination."
+      }
+    },
+    {
+      "entry": {
+        "name": "audit-unflagged",
+        "from": "1.0.0",
+        "to": "1.1.0",
+        "label": "benign-update",
+        "notes": "Hand-authored offline audit fixture."
+      },
+      "outcome": "completed",
+      "report": {
+        "id": "audit-unflagged",
+        "mode": "static",
+        "input": {
+          "packageName": "audit-unflagged",
+          "trustedVersion": "1.0.0",
+          "candidateVersion": "1.1.0"
+        },
+        "generatedAt": "2026-11-16T00:00:00.000Z",
+        "status": "INCONCLUSIVE",
+        "riskScore": null,
+        "summary": "Authored static report; no execution evidence.",
+        "releases": {
+          "trusted": {
+            "release": {
+              "name": "audit-unflagged",
+              "version": "1.0.0",
+              "description": "Authored audit fixture",
+              "license": "MIT",
+              "tarballUrl": "https://registry.npmjs.org/audit-unflagged/-/audit-unflagged-1.0.0.tgz",
+              "integrity": null,
+              "shasum": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "scripts": {},
+              "dependencies": {},
+              "optionalDependencies": {},
+              "peerDependencies": {},
+              "deprecated": null
+            },
+            "archiveSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "integrityVerified": "sha1",
+            "compressedBytes": 100,
+            "unpackedBytes": 200,
+            "warnings": [],
+            "fileCount": 4
+          },
+          "candidate": {
+            "release": {
+              "name": "audit-unflagged",
+              "version": "1.1.0",
+              "description": "Authored audit fixture",
+              "license": "MIT",
+              "tarballUrl": "https://registry.npmjs.org/audit-unflagged/-/audit-unflagged-1.1.0.tgz",
+              "integrity": null,
+              "shasum": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "scripts": {},
+              "dependencies": {},
+              "optionalDependencies": {},
+              "peerDependencies": {},
+              "deprecated": null
+            },
+            "archiveSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "integrityVerified": "sha1",
+            "compressedBytes": 100,
+            "unpackedBytes": 200,
+            "warnings": [],
+            "fileCount": 4
+          }
+        },
+        "metadataSignals": [],
+        "fileChanges": [],
+        "manifestChanges": [],
+        "findings": [],
+        "evidence": [],
+        "signalCounts": [
+          {
+            "category": "network",
+            "oldCount": 0,
+            "newCount": 0
+          }
+        ],
+        "coverage": {
+          "trustedFilesScanned": 1,
+          "candidateFilesScanned": 1,
+          "skippedFiles": 0,
+          "truncated": false,
+          "notes": []
+        },
+        "limitations": ["Static text only."]
+      },
+      "triage": {
+        "tier": "no-notable-changes",
+        "reasons": [],
+        "disclaimer": "This tier reflects only the checks listed, can miss obfuscated or indirect behavior, and is not a safety determination."
+      }
+    },
+    {
+      "entry": {
+        "name": "audit-failed",
+        "from": "1.0.0",
+        "to": "1.1.0",
+        "label": "benign-update",
+        "notes": "Hand-authored offline audit fixture."
+      },
+      "outcome": "failed",
+      "error": "Authored acquisition failure."
+    },
+    {
+      "entry": {
+        "name": "audit-finding",
+        "from": "1.0.0",
+        "to": "1.1.0",
+        "label": "benign-update",
+        "notes": "Hand-authored offline audit fixture."
+      },
+      "outcome": "completed",
+      "report": {
+        "id": "audit-finding",
+        "mode": "static",
+        "input": {
+          "packageName": "audit-finding",
+          "trustedVersion": "1.0.0",
+          "candidateVersion": "1.1.0"
+        },
+        "generatedAt": "2026-11-16T00:00:00.000Z",
+        "status": "INCONCLUSIVE",
+        "riskScore": null,
+        "summary": "Authored static report; no execution evidence.",
+        "releases": {
+          "trusted": {
+            "release": {
+              "name": "audit-finding",
+              "version": "1.0.0",
+              "description": "Authored audit fixture",
+              "license": "MIT",
+              "tarballUrl": "https://registry.npmjs.org/audit-finding/-/audit-finding-1.0.0.tgz",
+              "integrity": null,
+              "shasum": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "scripts": {},
+              "dependencies": {},
+              "optionalDependencies": {},
+              "peerDependencies": {},
+              "deprecated": null
+            },
+            "archiveSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "integrityVerified": "sha1",
+            "compressedBytes": 100,
+            "unpackedBytes": 200,
+            "warnings": [],
+            "fileCount": 4
+          },
+          "candidate": {
+            "release": {
+              "name": "audit-finding",
+              "version": "1.1.0",
+              "description": "Authored audit fixture",
+              "license": "MIT",
+              "tarballUrl": "https://registry.npmjs.org/audit-finding/-/audit-finding-1.1.0.tgz",
+              "integrity": null,
+              "shasum": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "scripts": {},
+              "dependencies": {},
+              "optionalDependencies": {},
+              "peerDependencies": {},
+              "deprecated": null
+            },
+            "archiveSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "integrityVerified": "sha1",
+            "compressedBytes": 100,
+            "unpackedBytes": 200,
+            "warnings": [],
+            "fileCount": 4
+          }
+        },
+        "metadataSignals": [],
+        "fileChanges": [
+          {
+            "path": "src/added.js",
+            "change": "added",
+            "oldSize": null,
+            "newSize": 100,
+            "oldSha256": null,
+            "newSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "manifestChanges": [],
+        "findings": [
+          {
+            "id": "finding-added",
+            "category": "network",
+            "title": "Authored network reference",
+            "description": "Fixture text only.",
+            "status": "STATIC SIGNAL",
+            "severity": "low",
+            "evidenceIds": ["ev-added"]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "ev-added",
+            "source": "npm-archive",
+            "file": "src/added.js",
+            "oldLine": 3,
+            "newLine": 7,
+            "oldExcerpt": "// old inert fixture text",
+            "newExcerpt": "// new inert fixture text",
+            "oldSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "newSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "signalCounts": [
+          {
+            "category": "network",
+            "oldCount": 1,
+            "newCount": 1
+          }
+        ],
+        "coverage": {
+          "trustedFilesScanned": 1,
+          "candidateFilesScanned": 1,
+          "skippedFiles": 0,
+          "truncated": false,
+          "notes": []
+        },
+        "limitations": ["Static text only."]
+      },
+      "triage": {
+        "tier": "needs-review",
+        "reasons": [
+          {
+            "id": "new-file:finding-added",
+            "source": "static",
+            "title": "Authored static reason",
+            "detail": "Textual comparison only.",
+            "evidenceRef": "finding-added"
+          }
+        ],
+        "disclaimer": "This tier reflects only the checks listed, can miss obfuscated or indirect behavior, and is not a safety determination."
+      }
+    },
+    {
+      "entry": {
+        "name": "audit-aggregate",
+        "from": "1.0.0",
+        "to": "1.1.0",
+        "label": "benign-update",
+        "notes": "Hand-authored offline audit fixture."
+      },
+      "outcome": "completed",
+      "report": {
+        "id": "audit-aggregate",
+        "mode": "static",
+        "input": {
+          "packageName": "audit-aggregate",
+          "trustedVersion": "1.0.0",
+          "candidateVersion": "1.1.0"
+        },
+        "generatedAt": "2026-11-16T00:00:00.000Z",
+        "status": "INCONCLUSIVE",
+        "riskScore": null,
+        "summary": "Authored static report; no execution evidence.",
+        "releases": {
+          "trusted": {
+            "release": {
+              "name": "audit-aggregate",
+              "version": "1.0.0",
+              "description": "Authored audit fixture",
+              "license": "MIT",
+              "tarballUrl": "https://registry.npmjs.org/audit-aggregate/-/audit-aggregate-1.0.0.tgz",
+              "integrity": null,
+              "shasum": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "scripts": {},
+              "dependencies": {},
+              "optionalDependencies": {},
+              "peerDependencies": {},
+              "deprecated": null
+            },
+            "archiveSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "integrityVerified": "sha1",
+            "compressedBytes": 100,
+            "unpackedBytes": 200,
+            "warnings": [],
+            "fileCount": 4
+          },
+          "candidate": {
+            "release": {
+              "name": "audit-aggregate",
+              "version": "1.1.0",
+              "description": "Authored audit fixture",
+              "license": "MIT",
+              "tarballUrl": "https://registry.npmjs.org/audit-aggregate/-/audit-aggregate-1.1.0.tgz",
+              "integrity": null,
+              "shasum": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "scripts": {},
+              "dependencies": {},
+              "optionalDependencies": {},
+              "peerDependencies": {},
+              "deprecated": null
+            },
+            "archiveSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "integrityVerified": "sha1",
+            "compressedBytes": 100,
+            "unpackedBytes": 200,
+            "warnings": [],
+            "fileCount": 4
+          }
+        },
+        "metadataSignals": [],
+        "fileChanges": [],
+        "manifestChanges": [],
+        "findings": [
+          {
+            "id": "finding-network",
+            "category": "network",
+            "title": "Authored network reference",
+            "description": "Fixture text only.",
+            "status": "STATIC SIGNAL",
+            "severity": "low",
+            "evidenceIds": ["ev-1", "ev-2", "ev-3", "ev-4"]
+          }
+        ],
+        "evidence": [
+          {
+            "id": "ev-1",
+            "source": "npm-archive",
+            "file": "tests/request.test.js",
+            "oldLine": 3,
+            "newLine": 7,
+            "oldExcerpt": "// old inert fixture text",
+            "newExcerpt": "// new inert fixture text",
+            "oldSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "newSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          {
+            "id": "ev-2",
+            "source": "npm-archive",
+            "file": "docs/request.js",
+            "oldLine": 3,
+            "newLine": 7,
+            "oldExcerpt": "// old inert fixture text",
+            "newExcerpt": "// new inert fixture text",
+            "oldSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "newSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          {
+            "id": "ev-3",
+            "source": "npm-archive",
+            "file": "examples/demo.js",
+            "oldLine": 3,
+            "newLine": 7,
+            "oldExcerpt": "// old inert fixture text",
+            "newExcerpt": "// new inert fixture text",
+            "oldSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "newSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          {
+            "id": "ev-4",
+            "source": "npm-archive",
+            "file": "dist/index.js",
+            "oldLine": 3,
+            "newLine": 7,
+            "oldExcerpt": "// old inert fixture text",
+            "newExcerpt": "// new inert fixture text",
+            "oldSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "newSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "signalCounts": [
+          {
+            "category": "network",
+            "oldCount": 1,
+            "newCount": 4
+          }
+        ],
+        "coverage": {
+          "trustedFilesScanned": 1,
+          "candidateFilesScanned": 1,
+          "skippedFiles": 0,
+          "truncated": false,
+          "notes": []
+        },
+        "limitations": ["Static text only."]
+      },
+      "triage": {
+        "tier": "needs-review",
+        "reasons": [
+          {
+            "id": "network-matches-increased",
+            "source": "static",
+            "title": "Authored static reason",
+            "detail": "Textual comparison only.",
+            "evidenceRef": "#/signalCounts/0"
+          }
+        ],
+        "disclaimer": "This tier reflects only the checks listed, can miss obfuscated or indirect behavior, and is not a safety determination."
+      }
+    }
+  ]
+}

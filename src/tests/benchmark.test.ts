@@ -104,7 +104,7 @@ const now = () => new Date("2026-11-16T00:00:00.000Z");
 describe("benchmark corpus validation", () => {
   it("validates 30 distinct real seed pairs with nonempty names and versions", () => {
     const parsed = corpusSchema.parse(corpus);
-    expect(parsed).toHaveLength(30);
+    expect(parsed).toHaveLength(60);
     expect(
       parsed.every(
         (entry) =>

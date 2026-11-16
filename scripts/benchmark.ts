@@ -1,5 +1,5 @@
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { basename, extname, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { version } from "../package.json";
 import type { CliAnalyzer } from "../src/lib/cli";
@@ -7,13 +7,16 @@ import { displayText } from "../src/lib/cli/output";
 import { corpusSchema } from "../src/lib/benchmark/schema";
 import { measureCorpus, replayBenchmark } from "../src/lib/benchmark/measure";
 import { renderBenchmarkSummary } from "../src/lib/benchmark/summary";
+import { renderBenchmarkAudit } from "../src/lib/benchmark/audit";
 
 const HELP = `DependencyGuard benchmark
 
 node --conditions=react-server --import tsx scripts/benchmark.ts [--corpus benchmark/corpus.json] [--out-dir benchmark/results]
 node --conditions=react-server --import tsx scripts/benchmark.ts --replay <results.json> [--out-dir benchmark/results]
+node --conditions=react-server --import tsx scripts/benchmark.ts --audit <results.json> [--out-dir benchmark/results]
 
-Corpus mode performs sequential static registry/archive analysis. Replay is offline.
+Corpus mode performs sequential static registry/archive analysis. Replay and audit are offline.
+Audit writes <input-name>-audit.md from saved tiers and evidence; it does not assign reviewer labels.
 Exit codes: 0 completed; 1 usage/file error; 2 one or more analysis failures.
 `;
 export interface BenchmarkIO {
@@ -49,7 +52,7 @@ export interface BenchmarkDependencies {
 }
 
 /** Importable for injected, offline command tests. Default analysis is loaded
- * only after corpus validation; --replay and --help never load the registry.
+ * only after corpus validation; --replay, --audit and --help never load the registry.
  */
 export async function benchmarkMain(
   args: string[],
@@ -66,6 +69,7 @@ export async function benchmarkMain(
       options: {
         corpus: { type: "string" },
         replay: { type: "string" },
+        audit: { type: "string" },
         "out-dir": { type: "string" },
         help: { type: "boolean", short: "h" },
       },
@@ -76,7 +80,9 @@ export async function benchmarkMain(
     if (
       positionals.length ||
       new Set(options).size !== options.length ||
-      (values.replay && values.corpus) ||
+      [values.replay, values.corpus, values.audit].filter(
+        (value) => value !== undefined,
+      ).length > 1 ||
       (values.help && options.length !== 1)
     )
       throw new Error("Invalid benchmark arguments.");
@@ -84,12 +90,26 @@ export async function benchmarkMain(
       io.stdout(HELP);
       return 0;
     }
-    const inputFile = values.replay ?? values.corpus ?? "benchmark/corpus.json";
+    const inputFile =
+      values.audit ?? values.replay ?? values.corpus ?? "benchmark/corpus.json";
     if (!inputFile.trim() || values["out-dir"]?.trim() === "")
       throw new Error("Empty file path.");
     const data: unknown = JSON.parse(
       (await io.read(inputFile)).replace(/^\uFEFF/, ""),
     );
+    if (values.audit !== undefined) {
+      const markdown = renderBenchmarkAudit(data);
+      const directory = values["out-dir"] ?? "benchmark/results";
+      const file = resolve(
+        directory,
+        `${basename(inputFile, extname(inputFile))}-audit.md`,
+      );
+      await io.mkdir(directory);
+      await io.writeNew(file, markdown);
+      io.stdout(markdown);
+      io.stderr(`${displayText(`Audit written to ${file}`)}\n`);
+      return 0;
+    }
     const startedAt = now();
     const progress = (text: string) => io.stderr(`${displayText(text)}\n`);
     let measurement;

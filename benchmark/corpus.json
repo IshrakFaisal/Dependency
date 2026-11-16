@@ -208,5 +208,215 @@
     "to": "23.10.2",
     "label": "benign-update",
     "notes": "Browser tooling patch with a postinstall declaration; no known incident for this pair in this seed corpus. Browser binaries are not installed by analysis."
+  },
+  {
+    "name": "react",
+    "from": "18.2.0",
+    "to": "18.3.1",
+    "label": "benign-update",
+    "notes": "Minor update across a minor-version boundary; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "typescript",
+    "from": "5.6.3",
+    "to": "5.7.3",
+    "label": "benign-update",
+    "notes": "Minor update across a minor-version boundary; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "axios",
+    "from": "1.6.8",
+    "to": "1.7.9",
+    "label": "benign-update",
+    "notes": "Minor update across a minor-version boundary; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "zod",
+    "from": "3.23.8",
+    "to": "3.24.2",
+    "label": "benign-update",
+    "notes": "Minor update across a minor-version boundary; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "prettier",
+    "from": "3.3.3",
+    "to": "3.4.2",
+    "label": "benign-update",
+    "notes": "Minor update across a minor-version boundary; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "webpack",
+    "from": "5.96.1",
+    "to": "5.97.1",
+    "label": "benign-update",
+    "notes": "Minor update across a minor-version boundary; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "rollup",
+    "from": "4.28.1",
+    "to": "4.29.1",
+    "label": "benign-update",
+    "notes": "Minor update across a minor-version boundary; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "vite",
+    "from": "5.3.6",
+    "to": "5.4.11",
+    "label": "benign-update",
+    "notes": "Minor update across a minor-version boundary; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "react",
+    "from": "18.3.1",
+    "to": "19.0.0",
+    "label": "benign-update",
+    "notes": "Major update across a major-version boundary; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "express",
+    "from": "4.21.2",
+    "to": "5.0.1",
+    "label": "benign-update",
+    "notes": "Major update across a major-version boundary; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "chalk",
+    "from": "4.1.2",
+    "to": "5.0.0",
+    "label": "benign-update",
+    "notes": "Major update across a major-version boundary; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "commander",
+    "from": "11.1.0",
+    "to": "12.0.0",
+    "label": "benign-update",
+    "notes": "Major update across a major-version boundary; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "uuid",
+    "from": "9.0.1",
+    "to": "10.0.0",
+    "label": "benign-update",
+    "notes": "Major update across a major-version boundary; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "undici",
+    "from": "5.28.5",
+    "to": "6.0.0",
+    "label": "benign-update",
+    "notes": "Major update across a major-version boundary; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "esbuild",
+    "from": "0.23.1",
+    "to": "0.24.0",
+    "label": "benign-update",
+    "notes": "Install-script cohort; lifecycle declarations are inspected as text only; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "sharp",
+    "from": "0.32.6",
+    "to": "0.33.0",
+    "label": "benign-update",
+    "notes": "Install-script cohort; lifecycle declarations are inspected as text only; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "@swc/core",
+    "from": "1.9.3",
+    "to": "1.10.0",
+    "label": "benign-update",
+    "notes": "Install-script cohort; lifecycle declarations are inspected as text only; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "better-sqlite3",
+    "from": "11.6.0",
+    "to": "11.7.0",
+    "label": "benign-update",
+    "notes": "Install-script cohort; lifecycle declarations are inspected as text only; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "bcrypt",
+    "from": "5.0.1",
+    "to": "5.1.0",
+    "label": "benign-update",
+    "notes": "Install-script cohort; lifecycle declarations are inspected as text only; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "puppeteer",
+    "from": "23.9.0",
+    "to": "23.10.0",
+    "label": "benign-update",
+    "notes": "Install-script cohort; lifecycle declarations are inspected as text only; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "tiny-invariant",
+    "from": "1.3.1",
+    "to": "1.3.3",
+    "label": "benign-update",
+    "notes": "Small utility package cohort; selected for narrow package scope, not a measured popularity rank; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "klona",
+    "from": "2.0.5",
+    "to": "2.0.6",
+    "label": "benign-update",
+    "notes": "Small utility package cohort; selected for narrow package scope, not a measured popularity rank; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "mitt",
+    "from": "3.0.0",
+    "to": "3.0.1",
+    "label": "benign-update",
+    "notes": "Small utility package cohort; selected for narrow package scope, not a measured popularity rank; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "picocolors",
+    "from": "1.0.0",
+    "to": "1.1.1",
+    "label": "benign-update",
+    "notes": "Small utility package cohort; selected for narrow package scope, not a measured popularity rank; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "ufo",
+    "from": "1.4.0",
+    "to": "1.5.4",
+    "label": "benign-update",
+    "notes": "Small utility package cohort; selected for narrow package scope, not a measured popularity rank; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "ohash",
+    "from": "1.1.3",
+    "to": "1.1.4",
+    "label": "benign-update",
+    "notes": "Small utility package cohort; selected for narrow package scope, not a measured popularity rank; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "pathe",
+    "from": "1.1.1",
+    "to": "1.1.2",
+    "label": "benign-update",
+    "notes": "Small utility package cohort; selected for narrow package scope, not a measured popularity rank; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "defu",
+    "from": "6.1.3",
+    "to": "6.1.4",
+    "label": "benign-update",
+    "notes": "Small utility package cohort; selected for narrow package scope, not a measured popularity rank; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "destr",
+    "from": "2.0.2",
+    "to": "2.0.3",
+    "label": "benign-update",
+    "notes": "Small utility package cohort; selected for narrow package scope, not a measured popularity rank; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
+  },
+  {
+    "name": "dlv",
+    "from": "1.1.2",
+    "to": "1.1.3",
+    "label": "benign-update",
+    "notes": "Small utility package cohort; selected for narrow package scope, not a measured popularity rank; no known incident for this exact pair in this corpus, a curation assumption rather than an incident review."
   }
 ]
