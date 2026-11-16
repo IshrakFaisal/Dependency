@@ -1,7 +1,8 @@
 import "server-only";
 import path from "node:path";
 import { AnalysisStore, JobLimitError } from "@/lib/analysis/store";
-import { fetchRelease } from "@/lib/analysis/registry";
+import { fetchRelease, fetchVersionMetadata } from "@/lib/analysis/registry";
+import { computeMetadataSignals } from "@/lib/analysis/metadata-signals";
 import { fetchSnapshot } from "@/lib/analysis/archive";
 import { compareSnapshots } from "@/lib/analysis/compare";
 import { AnalysisInputError } from "@/lib/analysis/errors";
@@ -32,12 +33,25 @@ export async function analyzeReleases(
     job.input.packageName,
     job.input.candidateVersion,
   );
+  const trustedMetadata = await fetchVersionMetadata(
+    job.input.packageName,
+    job.input.trustedVersion,
+  );
+  const candidateMetadata = await fetchVersionMetadata(
+    job.input.packageName,
+    job.input.candidateVersion,
+  );
   await progress(1);
   const trusted = await fetchSnapshot(trustedRelease);
   const candidate = await fetchSnapshot(candidateRelease);
   await progress(2);
   await progress(3);
   const report = compareSnapshots(job.id, job.input, trusted, candidate);
+  report.metadataSignals = computeMetadataSignals(
+    trustedMetadata,
+    candidateMetadata,
+    report.generatedAt,
+  );
   await progress(4);
   return report;
 }

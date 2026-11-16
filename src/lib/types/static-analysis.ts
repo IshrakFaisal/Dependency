@@ -1,5 +1,6 @@
 import type { FindingStatus, Severity } from "@/lib/types";
 import type { ComparisonInput } from "@/lib/validation";
+import type { MetadataSignal } from "@/lib/analysis/metadata-signals";
 
 export interface RegistryRelease {
   name: string;
@@ -88,6 +89,8 @@ export interface ManifestChange {
 }
 
 export interface StaticAnalysisReport {
+  /** Present on new pipeline reports; older persisted reports may omit it. */
+  metadataSignals?: MetadataSignal[];
   id: string;
   mode: "static";
   input: ComparisonInput;

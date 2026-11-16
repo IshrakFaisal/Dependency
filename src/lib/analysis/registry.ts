@@ -4,6 +4,10 @@ import { z } from "zod";
 import { AnalysisInputError } from "@/lib/analysis/errors";
 import type { RegistryRelease } from "@/lib/types/static-analysis";
 import { comparisonInputSchema } from "@/lib/validation";
+import {
+  versionMetadataSchema,
+  type VersionMetadata,
+} from "@/lib/analysis/metadata-signals";
 
 export const REGISTRY_LIMITS = {
   metadataBytes: 2 * 1024 * 1024,
@@ -150,10 +154,7 @@ export async function fetchRegistryBytes(
   }
 }
 
-export async function fetchRelease(
-  packageName: string,
-  version: string,
-): Promise<RegistryRelease> {
+function validateReleaseInput(packageName: string, version: string) {
   const nameResult =
     comparisonInputSchema.shape.packageName.safeParse(packageName);
   const versionResult =
@@ -168,6 +169,68 @@ export async function fetchRelease(
       "Enter a valid npm package name and an exact release version.",
     );
   }
+}
+
+/** Fetch only the selected version's signal inputs from a full packument.
+ * Reuses the existing bounded, fixed-origin transport. Package-level current
+ * maintainers are intentionally not substituted for version-level history.
+ */
+export async function fetchVersionMetadata(
+  packageName: string,
+  version: string,
+): Promise<VersionMetadata> {
+  validateReleaseInput(packageName, version);
+  const bytes = await fetchRegistryBytes(
+    `https://registry.npmjs.org/${encodeURIComponent(packageName)}`,
+    REGISTRY_LIMITS.metadataBytes,
+    "metadata",
+  );
+  let value: unknown;
+  try {
+    value = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
+  } catch {
+    throw new AnalysisInputError(
+      "The npm registry returned invalid package metadata.",
+    );
+  }
+  const packument = z
+    .object({
+      name: z.string(),
+      versions: z.record(z.string(), z.unknown()),
+      time: z.record(z.string(), z.unknown()).nullish().catch(undefined),
+    })
+    .safeParse(value);
+  if (!packument.success || packument.data.name !== packageName)
+    throw new AnalysisInputError(
+      "The npm registry returned unsupported or mismatched package metadata.",
+    );
+  if (!Object.hasOwn(packument.data.versions, version))
+    throw new AnalysisInputError(
+      "The requested version is missing from npm package metadata.",
+    );
+  const selected = versionMetadataSchema.safeParse(
+    packument.data.versions[version],
+  );
+  if (
+    !selected.success ||
+    selected.data.name !== packageName ||
+    selected.data.version !== version
+  )
+    throw new AnalysisInputError(
+      "The npm registry release identity does not match the requested package and version.",
+    );
+  const published = packument.data.time?.[version];
+  return {
+    ...selected.data,
+    time: typeof published === "string" ? { [version]: published } : undefined,
+  };
+}
+
+export async function fetchRelease(
+  packageName: string,
+  version: string,
+): Promise<RegistryRelease> {
+  validateReleaseInput(packageName, version);
   const url = `https://registry.npmjs.org/${encodeURIComponent(packageName)}/${encodeURIComponent(version)}`;
   const bytes = await fetchRegistryBytes(
     url,

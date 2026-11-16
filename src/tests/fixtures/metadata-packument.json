@@ -1,0 +1,70 @@
+{
+  "name": "@dg-fixture/metadata-signals",
+  "maintainers": [{ "name": "current-owner-not-historical" }],
+  "time": {
+    "created": "2026-01-01T00:00:00.000Z",
+    "modified": "2026-11-15T00:00:00.000Z",
+    "1.0.0": "2026-11-01T00:00:00.000Z",
+    "1.0.1": "2026-11-02T00:00:00.000Z",
+    "1.1.0": "2026-11-14T00:00:00.000Z"
+  },
+  "versions": {
+    "1.0.0": {
+      "name": "@dg-fixture/metadata-signals",
+      "version": "1.0.0",
+      "scripts": { "install": "node old-fixture.js", "test": "fixture-only" },
+      "_npmUser": { "name": "fixture-alice", "email": "alice@example.invalid" },
+      "maintainers": [{ "name": "fixture-alice" }, { "name": "fixture-bob" }],
+      "dependencies": { "dg-existing": "^1.0.0" },
+      "dist": {
+        "tarball": "https://registry.npmjs.org/@dg-fixture/metadata-signals/-/metadata-signals-1.0.0.tgz",
+        "shasum": "0000000000000000000000000000000000000000",
+        "attestations": {
+          "url": "https://synthetic.invalid/attestation",
+          "provenance": { "predicateType": "synthetic-fixture" }
+        }
+      }
+    },
+    "1.0.1": {
+      "name": "@dg-fixture/metadata-signals",
+      "version": "1.0.1",
+      "scripts": {
+        "test": "different-non-install-script",
+        "install": "node old-fixture.js"
+      },
+      "_npmUser": { "name": "fixture-alice", "email": "alice@example.invalid" },
+      "maintainers": [{ "name": "fixture-bob" }, { "name": "fixture-alice" }],
+      "dependencies": { "dg-existing": "^2.0.0" },
+      "optionalDependencies": { "dg-optional": "1.0.0" },
+      "devDependencies": { "dg-dev": "1.0.0" },
+      "peerDependencies": { "dg-peer": "1.0.0" },
+      "dist": {
+        "tarball": "https://registry.npmjs.org/@dg-fixture/metadata-signals/-/metadata-signals-1.0.1.tgz",
+        "shasum": "0000000000000000000000000000000000000000",
+        "attestations": { "url": "https://synthetic.invalid/new-attestation" }
+      }
+    },
+    "1.1.0": {
+      "name": "@dg-fixture/metadata-signals",
+      "version": "1.1.0",
+      "scripts": {
+        "preinstall": "node pre-fixture.js",
+        "install": "node changed-fixture.js",
+        "postinstall": "node post-fixture.js",
+        "prepare": "node prepare-fixture.js"
+      },
+      "_npmUser": { "name": "fixture-carol", "email": "carol@example.invalid" },
+      "maintainers": [{ "name": "fixture-carol" }, { "name": "fixture-alice" }],
+      "dependencies": {
+        "dg-new-z": "1.0.0",
+        "dg-existing": "^2.0.0",
+        "dg-new-a": "1.0.0"
+      },
+      "dist": {
+        "tarball": "https://registry.npmjs.org/@dg-fixture/metadata-signals/-/metadata-signals-1.1.0.tgz",
+        "shasum": "0000000000000000000000000000000000000000"
+      }
+    },
+    "2.0.0": { "name": "@dg-fixture/metadata-signals", "version": "2.0.0" }
+  }
+}

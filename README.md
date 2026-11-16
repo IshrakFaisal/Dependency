@@ -109,6 +109,14 @@ Enter a public npm package name and two distinct, exact semantic versions. **Ana
 
 Progress reflects server job state. Reports and recent history survive a server restart. Failed requests show a retry action. Reports support JSON download and browser printing.
 
+### Metadata signals
+
+New real pipeline reports also contain `metadataSignals`; older saved reports may omit it. `computeMetadataSignals(oldMeta, newMeta, now)` in `src/lib/analysis/metadata-signals.ts` is a pure, Zod-validated comparison with an explicit clock (a Date, epoch milliseconds, or timezone-qualified ISO timestamp). It emits only `install-script-added`, `maintainer-changed`, `provenance-dropped`, `dependency-added`, and `recent-release`. These signals do not change any existing assessment fields: status stays **INCONCLUSIVE** and `riskScore` stays `null`.
+
+Inputs contain version-level `scripts`, `_npmUser`, `maintainers`, `dist.attestations`, `dependencies`, and the packument's `time` map. Only preinstall/install/postinstall/prepare additions or exact content changes are included. Dependency signals list added names from `dependencies`, excluding range edits and optional/dev/peer-only declarations. People are identified by account name, falling back to normalized email; maintainer order/duplicates and contact-email edits for the same named account are ignored. Missing publisher or maintainer baselines are skipped. Missing time is skipped; future timestamps and ages of exactly seven days are not recent. Attestation absence is reported only when the old version advertised attestation metadata; no attestation is downloaded or verified.
+
+The server-only `fetchVersionMetadata(packageName, version)` helper reuses the existing registry transport to select one version from the full packument and its exact `time[version]` entry. Current top-level maintainers are not treated as historical version ownership. Each analysis makes two additional sequential metadata requests under the existing 2 MiB / 15-second limits; a failed or oversized packument fails the job through existing error handling. No new dependencies, UI, scoring, runtime, investigation, or demo behavior are added. Tests use synthetic fixture JSON and mocked HTTP; live registry behavior for this helper has not been verified.
+
 | Route                    | Purpose                                                     |
 | ------------------------ | ----------------------------------------------------------- |
 | `/`                      | Comparison form, recent local analyses, demo entry point    |
